@@ -217,3 +217,5 @@ pip-log.txt
 # My stuff
 Spec/
 .idea/
+out/
+Abgabe/
