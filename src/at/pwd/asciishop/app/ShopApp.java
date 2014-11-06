@@ -9,10 +9,15 @@ import at.pwd.asciishop.helper.Strings;
  * Created by Robert on 06.11.2014.
  */
 public class ShopApp implements IOHelper.IOResultCallback {
-    private IOHelper io;
+    enum PARSE_TYPES {
+        INT, DOUBLE, NONE
+    }
 
-    private int lines = 0;
-    private String lastLine = null;
+    private PARSE_TYPES type;
+    private double percentage;
+    private int bars;
+    private IOHelper io;
+    private StringRenderer renderer = new StringRenderer();
 
     public ShopApp() {
         this.io = new IOHelper();
@@ -23,36 +28,49 @@ public class ShopApp implements IOHelper.IOResultCallback {
 
     public void run() {
         // read image
-        boolean unexpectedStop = this.io.readLines(this);
-
-        // output dimensions
-        if (!unexpectedStop) {
-            this.io.writeLine(width() + " " + height());
+        boolean unexpectedStop = this.io.readStrings(this);
+        if (unexpectedStop) {
+            io.writeLine(Strings.INVALID_INPUT);
         }
     }
-
-    public int width() {
-        return this.lastLine != null ? this.lastLine.length() : 0;
-    }
-
-    public int height() {
-        return this.lines;
-    }
-
     /**
      * IOResultCallback implementation
      */
     @Override
-    public boolean postResult(String result, IOHelper helper) {
-       if (this.lastLine != null && this.lastLine.length() != result.length()) {
-           helper.writeLine(Strings.INVALID_INPUT);
-
-           return true;
-       } else {
-           this.lines++;
-           this.lastLine = result;
-
-           return false;
-       }
+    public boolean postResult(final String label, final IOHelper helper) {
+        this.type = PARSE_TYPES.NONE;
+        boolean result = false;
+        if (!helper.readNumeric(this)) {
+            switch (this.type) {
+                case NONE:
+                    result = true;
+                    break;
+                case INT:
+                    helper.writeLine(renderer.drawBar(label, this.bars));
+                    break;
+                case DOUBLE:
+                    helper.writeLine(renderer.drawBar(label, this.percentage));
+                    break;
+            }
+        } else {
+            result = true;
+        }
+        return result;
+    }
+    @Override
+    public boolean postResult(final int value, final IOHelper helper) {
+        this.bars = value;
+        if (this.bars >= 0 && this.bars <= 30) {
+            this.type = PARSE_TYPES.INT;
+        }
+        return false;
+    }
+    @Override
+    public boolean postResult(final double value, final IOHelper helper) {
+        this.percentage = value;
+        if (this.percentage >= 0 && this.percentage <= 1) {
+            this.type = PARSE_TYPES.DOUBLE;
+        }
+        return false;
     }
 }

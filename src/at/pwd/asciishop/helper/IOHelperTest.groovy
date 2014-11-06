@@ -12,7 +12,7 @@ class IOHelperTest extends GroovyTestCase {
         def helper = new IOHelper(input, output)
 
         // act / assert
-        assert !helper.readLines({String line, IOHelper h2 -> assert line == "hello"; false } as IOHelper.IOResultCallback)
+        assert helper.readLines({String line, IOHelper h2 -> assert line == "hello"; true } as IOHelper.IOResultCallback)
     }
 
     void testReadLine() {
@@ -23,7 +23,40 @@ class IOHelperTest extends GroovyTestCase {
         def helper = new IOHelper(input, output)
 
         // act / assert
-        assert !helper.readLine({String line, IOHelper h2 -> assert line == "hello"; false } as IOHelper.IOResultCallback)
+        assert helper.readLine({String line, IOHelper h2 -> assert line == "hello"; true } as IOHelper.IOResultCallback)
+    }
+
+    void testReadNumeric_Int() {
+        // arrange
+        def bytes  = "200".getBytes()
+        def output = new ByteArrayOutputStream()
+        def input  = new ByteArrayInputStream(bytes)
+        def helper = new IOHelper(input, output)
+
+        // act / assert
+        assert helper.readNumeric({int line, IOHelper h2 -> assert line == 200; true } as IOHelper.IOResultCallback)
+    }
+
+    void testReadNumeric_Double() {
+        // arrange
+        def bytes  = "13.37".getBytes()
+        def output = new ByteArrayOutputStream()
+        def input  = new ByteArrayInputStream(bytes)
+        def helper = new IOHelper(input, output)
+
+        // act / assert
+        assert helper.readNumeric({double line, IOHelper h2 -> assert line == 13.37; true } as IOHelper.IOResultCallback)
+    }
+
+    void testReadNumeric_String() {
+        // arrange
+        def bytes  = "hello".getBytes()
+        def output = new ByteArrayOutputStream()
+        def input  = new ByteArrayInputStream(bytes)
+        def helper = new IOHelper(input, output)
+
+        // act / assert
+        assert !helper.readNumeric({String line, IOHelper h2 -> true } as IOHelper.IOResultCallback)
     }
 
     void testWriteLine() {

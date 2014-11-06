@@ -219,3 +219,4 @@ Spec/
 .idea/
 out/
 Abgabe/
+*.class

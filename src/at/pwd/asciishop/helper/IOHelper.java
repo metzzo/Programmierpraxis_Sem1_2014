@@ -26,8 +26,7 @@ public class IOHelper {
     }
 
     /**
-     * Read lines from the command prompt until there is no next line or postResult returns false
-     * @return stopped due to unexpected input
+     * Reads lines from the command prompt until there is no next line or postResult returns false
      */
     public boolean readLines(final IOResultCallback result) {
         boolean stop = false;
@@ -38,12 +37,70 @@ public class IOHelper {
     }
 
     /**
+     * Reads Strings from the command prompt until there is no next line or postResult returns false
+     */
+    public boolean readStrings(final IOResultCallback result) {
+        boolean stop = false;
+        while (scanner.hasNext() && !stop) {
+            stop = readString(result);
+        }
+        return stop;
+    }
+
+    /**
+     * Reads Strings from the command prompt until there is no next line or postResult returns false
+     */
+    public boolean readNumerics(final IOResultCallback result) {
+        boolean stop = false;
+        while (scanner.hasNext() && !stop) {
+            stop = readNumeric(result);
+        }
+        return stop;
+    }
+
+    /**
+     * Reads a double from input
+     * @return should the reading process be stopped?
+     */
+    public boolean readString(final IOResultCallback result) {
+        if (scanner.hasNext()) {
+            final String value = scanner.next();
+            return result.postResult(value, this);
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Reads a single line from input
-     * @return unexpected input?
+     * @return should the reading process be stopped?
      */
     public boolean readLine(final IOResultCallback result) {
-        final String line = scanner.nextLine();
-        return result.postResult(line, this);
+        if (scanner.hasNextLine()) {
+            final String line = scanner.nextLine();
+            return result.postResult(line, this);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Reads a double from input, if input is not a double,
+     * @return should the reading process be stopped?
+     */
+    public boolean readNumeric(final IOResultCallback result) {
+        if (scanner.hasNextDouble()) {
+            final String stringValue = scanner.next();
+            if (stringValue.contains(".") || stringValue.contains(",")) {
+                final double value = new Double(stringValue).doubleValue();
+                return result.postResult(value, this);
+            } else {
+                final int value = new Integer(stringValue).intValue();
+                return result.postResult(value, this);
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -62,5 +119,7 @@ public class IOHelper {
      */
     public interface IOResultCallback {
         public boolean postResult(final String result, final IOHelper helper);
+        public boolean postResult(final int result, final IOHelper helper);
+        public boolean postResult(final double result, final IOHelper helper);
     }
 }

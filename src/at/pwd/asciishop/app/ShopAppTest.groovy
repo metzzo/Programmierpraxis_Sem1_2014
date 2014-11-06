@@ -9,16 +9,44 @@ class ShopAppTest extends GroovyTestCase {
     def app, input, output
     def data = [
         [
-                input: "aa\naa\n",
-                output: "2 2\n"
+                input: "WS2009 15",
+                output: "WS2009  |###############               |\n"
         ],
         [
-                input: "asdfgassdsdads\nasdfgassdsdads\nasdfgassdsdads\nasdfgassdsdads\n",
-                output: "14 4\n"
+                input: "SS2010 3",
+                output: "SS2010  |###                           |\n"
         ],
         [
-                input: "asdf\naa\n",
-                output: "INPUT MISMATCH\n"
+                input: "WS2010 21",
+                output: "WS2010  |#####################         |\n"
+        ],
+        [
+                input: "SS2011 14",
+                output: "SS2011  |##############                |\n"
+        ],
+        [
+                input: "ColdMonths 0.8",
+                output: "ColdMont|########################      |\n"
+        ],
+        [
+                input: "WarmMonths 0.15",
+                output: "WarmMont|#####                         |\n"
+        ],
+        [
+                input: "HotMonths 0.05",
+                output: "HotMonth|##                            |\n"
+        ],
+        [
+                input: "WS2009 15 SS2010 3 WS2010 0.7 SS2011 0.47",
+                output: "WS2009  |###############               |\nSS2010  |###                           |\nWS2010  |#####################         |\nSS2011  |##############                |\n"
+        ],
+        [
+                input: "SS2011 14",
+                output: "SS2011  |##############                |\n"
+        ],
+        [
+                input: "5 5\n55 55\n23 23",
+                output: "5       |#####                         |\nINPUT ERROR\n"
         ]
     ]
 
@@ -33,7 +61,7 @@ class ShopAppTest extends GroovyTestCase {
             app.run()
 
             // assert
-            assert Arrays.equals(output.toByteArray(), expectedOutput.getBytes()): "Output != Expected "+output.toString()+"|"+expectedOutput.toString()
+            assert Arrays.equals(output.toByteArray(), expectedOutput.getBytes()): "Output != Expected "+output.toString()+"_"+expectedOutput.toString()
         }
     }
 
