@@ -5,6 +5,15 @@ package at.pwd.asciishop.app;
  * Created by Robert on 06.11.2014.
  */
 public class StringRenderer {
+    private ShopImage image;
+
+    public StringRenderer(final ShopImage image) {
+        this.image = image;
+    }
+    public StringRenderer() {
+        this.image = null;
+    }
+
     /**
      * character 'c' is repeated 'count' times
      */
@@ -49,5 +58,22 @@ public class StringRenderer {
 
     public String drawBar(final String label, final double value) {
         return drawBar(label, (int)Math.round(value * 30));
+    }
+
+    public ShopImage fill(final int x, final int y, final char newChar) {
+        return fill(x, y, newChar, this.image.access(x, y));
+    }
+
+    private ShopImage fill(final int x, final int y, final char newChar, final char oldChar) {
+        // TODO: this should not be implemented recursively to avoid stack overflows
+        final char currentChar = this.image.access(x, y);
+        if (currentChar != 0 && currentChar != newChar && oldChar == currentChar) {
+            this.image = this.image.set(x, y, newChar);
+            this.image = fill(x + 1, y    , newChar, oldChar);
+            this.image = fill(x - 1, y    , newChar, oldChar);
+            this.image = fill(x    , y + 1, newChar, oldChar);
+            this.image = fill(x    , y - 1, newChar, oldChar);
+        }
+        return this.image;
     }
 }

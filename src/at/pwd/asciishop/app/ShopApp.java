@@ -3,21 +3,19 @@ package at.pwd.asciishop.app;
 import at.pwd.asciishop.helper.IOHelper;
 import at.pwd.asciishop.helper.Strings;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * This class aims to support all the operations required for "AsciiShop"
  *
  * Created by Robert on 06.11.2014.
  */
 public class ShopApp implements IOHelper.IOResultCallback {
-    enum PARSE_TYPES {
-        INT, DOUBLE, NONE
-    }
-
-    private PARSE_TYPES type;
-    private double percentage;
-    private int bars;
     private IOHelper io;
-    private StringRenderer renderer = new StringRenderer();
+    private ShopImage image;
+    private List<Integer> params;
+    private int currentPosition = 0;
 
     public ShopApp() {
         this.io = new IOHelper();
@@ -27,50 +25,117 @@ public class ShopApp implements IOHelper.IOResultCallback {
     }
 
     public void run() {
-        // read image
-        boolean unexpectedStop = this.io.readStrings(this);
-        if (unexpectedStop) {
-            io.writeLine(Strings.INVALID_INPUT);
-        }
-    }
-    /**
-     * IOResultCallback implementation
-     */
-    @Override
-    public boolean postResult(final String label, final IOHelper helper) {
-        this.type = PARSE_TYPES.NONE;
-        boolean result = false;
-        if (!helper.readNumeric(this)) {
-            switch (this.type) {
-                case NONE:
-                    result = true;
-                    break;
-                case INT:
-                    helper.writeLine(renderer.drawBar(label, this.bars));
-                    break;
-                case DOUBLE:
-                    helper.writeLine(renderer.drawBar(label, this.percentage));
-                    break;
+        // read expected lines
+        boolean unexpected =  this.io.readString(new IOHelper.IOResultCallback() {
+            @Override
+            public boolean postResult(String command, IOHelper helper) {
+                if (command.toLowerCase().equals("read")) {
+                    return helper.readNumeric(this);
+                } else {
+                    return true;
+                }
             }
+
+            @Override
+            public boolean postResult(int result, IOHelper helper) {
+                ShopApp.this.image = new ShopImage(result);
+                return false;
+            }
+
+            @Override
+            public boolean postResult(double result, IOHelper helper) { return true; }
+        });
+        if (unexpected) {
+            this.io.writeLine(Strings.INVALID_INPUT);
+            this.image = null;
+            return;
+        }
+
+        // read image
+        final int height = this.image.height();
+        this.currentPosition = 0;
+        for (int i = 0; i < height; i++) {
+            unexpected = this.io.readString(new IOHelper.IOResultCallback() {
+                @Override
+                public boolean postResult(String result, IOHelper helper) {
+                    final ShopImage newImage = image.update(currentPosition, result);
+                    if (image != newImage) {
+                        image = newImage;
+                        ShopApp.this.currentPosition++;
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+
+                @Override
+                public boolean postResult(int result, IOHelper helper) { return true; }
+
+                @Override
+                public boolean postResult(double result, IOHelper helper) { return true; }
+            });
+            if (unexpected) {
+                this.io.writeLine(Strings.INVALID_INPUT);
+                return;
+            }
+        }
+
+        // read fill commands
+        unexpected = this.io.readStrings(this);
+        if (unexpected) {
+            this.io.writeLine(Strings.INVALID_INPUT);
+            this.image = null;
+            return;
+        }
+        if (this.image != null) {
+            this.io.writeLine(this.image.toString());
+            this.io.writeLine(this.image.width() + " " + this.image.height());
+        }
+    }
+
+    @Override
+    public boolean postResult(String result, IOHelper helper) {
+        if (result.toLowerCase().equals("fill")) {
+            params = new LinkedList<Integer>();
+
+            if (this.io.readNumeric(this)) return true;
+            if (this.io.readNumeric(this)) return true;
+            if (this.io.readString(this)) return true;
+
+            params = null;
+
+            return false;
+        } else if (params != null && params.size() == 2) {
+            final int x  = params.get(0);
+            final int y  = params.get(1);
+            final char c = result.charAt(0);
+
+            final StringRenderer renderer = new StringRenderer(this.image);
+            final ShopImage newImage      = renderer.fill(x, y, c);
+            if (newImage == this.image) {
+                this.io.writeLine(Strings.INVALID_OPERATION);
+                this.image = null;
+            } else {
+                this.image = newImage;
+            }
+            return false;
         } else {
-            result = true;
+            return true;
         }
-        return result;
     }
+
     @Override
-    public boolean postResult(final int value, final IOHelper helper) {
-        this.bars = value;
-        if (this.bars >= 0 && this.bars <= 30) {
-            this.type = PARSE_TYPES.INT;
+    public boolean postResult(int result, IOHelper helper) {
+        if (params != null && params.size() < 2) {
+            params.add(result);
+            return false;
+        } else {
+            return true;
         }
-        return false;
     }
+
     @Override
-    public boolean postResult(final double value, final IOHelper helper) {
-        this.percentage = value;
-        if (this.percentage >= 0 && this.percentage <= 1) {
-            this.type = PARSE_TYPES.DOUBLE;
-        }
-        return false;
+    public boolean postResult(double result, IOHelper helper) {
+        return true;
     }
 }

@@ -5,6 +5,6 @@ package at.pwd.asciishop.helper;
  * Created by Robert on 06.11.2014.
  */
 public abstract class Strings {
-    public static final String INVALID_INPUT = "INPUT ERROR";
-
+    public static final String INVALID_INPUT     = "INPUT MISMATCH";
+    public static final String INVALID_OPERATION = "OPERATION FAILED";
 }
