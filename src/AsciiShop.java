@@ -1,6 +1,6 @@
 import at.pwd.asciishop.app.ShopApp;
-import at.pwd.asciishop.app.ShopImage;
-import at.pwd.asciishop.app.StringRenderer;
+import at.pwd.asciishop.app.AsciiImage;
+import at.pwd.asciishop.app.AsciiImageOperation;
 
 /**
  * Entry point for AsciiShop
@@ -16,8 +16,8 @@ public class AsciiShop {
     }
 
     public static void fill(final String[] image, final int fillx, final int filly, final char newChar) {
-        final StringRenderer renderer = new StringRenderer(new ShopImage(image));
-        final ShopImage finalImage = renderer.fill(fillx, filly, newChar);
+        final AsciiImageOperation renderer = new AsciiImageOperation(new AsciiImage(image));
+        final AsciiImage finalImage = renderer.fill(fillx, filly, newChar);
         for (int y = 0; y < image.length; y++) {
             final StringBuilder builder = new StringBuilder();
             for (int x = 0; x < image[0].length(); x++) {
