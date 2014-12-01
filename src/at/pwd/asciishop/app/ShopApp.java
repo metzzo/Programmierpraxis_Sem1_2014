@@ -95,6 +95,10 @@ public class ShopApp implements IOHelper.IOResultCallback {
 
     @Override
     public boolean postResult(String result, IOHelper helper) {
+        if (this.image == null) {
+            return false;
+        }
+
         if (result.toLowerCase().equals("fill")) {
             params = new LinkedList<Integer>();
 
@@ -113,9 +117,18 @@ public class ShopApp implements IOHelper.IOResultCallback {
         } else if (result.toLowerCase().equals("flip-v")) {
             final AsciiImageOperation operation = new AsciiImageOperation(this.image);
             this.image = operation.flipV();
+
+            return false;
         } else if (result.toLowerCase().equals("transpose")) {
             final AsciiImageOperation operation = new AsciiImageOperation(this.image);
             this.image = operation.transpose();
+
+            return false;
+        } else if (result.toLowerCase().equals("symmetric-h")) {
+            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
+            this.io.writeLine("" + operation.isSymmetricH());
+
+            return false;
         } else if (params != null && params.size() == 2) {
             final int x  = params.get(0);
             final int y  = params.get(1);

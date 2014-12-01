@@ -36,6 +36,7 @@ public class AsciiImageOperation {
                 final char currentChar = this.image.access(x, y);
                 if (!chars.contains(currentChar)) {
                     uniqueChars++;
+                    chars.add(currentChar);
                 }
             }
         }
@@ -59,7 +60,7 @@ public class AsciiImageOperation {
     }
 
     public AsciiImage transpose() {
-        AsciiImage newImage = new AsciiImage(image.getWidth(), image.getHeight());
+        AsciiImage newImage = new AsciiImage(image.getHeight(), image.getWidth());
         for (int x = 0; x < newImage.getHeight(); x++) {
             for (int y = 0;  y < image.getWidth(); y++) {
                 final char currChar = image.access(y, x);
@@ -70,11 +71,11 @@ public class AsciiImageOperation {
         return newImage;
     }
 
-    public boolean isSymmetric() {
-        for (int x = 0;  x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight() / 2; y++) {
+    public boolean isSymmetricH() {
+        for (int x = 0;  x < image.getWidth() / 2; x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
                 final char left = image.access(x, y);
-                final char right = image.access(image.getWidth() - x -1, y);
+                final char right = image.access(image.getWidth() - x - 1, y);
                 if (left != right) {
                     return false;
                 }
