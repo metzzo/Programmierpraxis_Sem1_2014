@@ -7,4 +7,5 @@ package at.pwd.asciishop.helper;
 public abstract class Strings {
     public static final String INVALID_INPUT     = "INPUT MISMATCH";
     public static final String INVALID_OPERATION = "OPERATION FAILED";
+    public static final String INVALID_COMMAND = "UNKNOWN COMMAND";
 }

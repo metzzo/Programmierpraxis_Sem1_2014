@@ -5,48 +5,25 @@ package at.pwd.asciishop.app;
  * Created by Robert on 07.11.2014.
  */
 public class AsciiImage {
-    private String[] rows;
+    private char[][] data;
 
-    public AsciiImage(final int capacity) {
-        this.rows = new String[capacity];
-    }
     public AsciiImage(final int width, final int height) {
-        this.rows = new String[height];
-        for (int i = 0; i < height; i++) {
-            final StringBuilder builder = new StringBuilder();
-            for (int j = 0; j < width; j++) {
-                builder.append(' ');
-            }
-            this.rows[i] = builder.toString();
-        }
-    }
-
-    public AsciiImage(final String[] rows) {
-        this.rows = rows;
+        this.data = new char[width][height];
     }
 
     public AsciiImage(final AsciiImage image) {
-        this.rows = image.rows;
+        this.data = image.data.clone();
     }
 
     /**
      * @return If w is not yet set properly '-1' is returned instead
      */
     public int getWidth() {
-        for (final String row : rows) {
-            if (row != null) {
-                return row.length();
-            }
-        }
-        return -1;
+        return data.length;
     }
 
     public int getHeight() {
-        return rows.length;
-    }
-
-    public String getRow(final int line) {
-        return rows[line];
+        return data[0].length;
     }
 
     public String toString() {
@@ -55,7 +32,9 @@ public class AsciiImage {
             if (y != 0) {
                 builder.append('\n');
             }
-            builder.append(this.rows[y]);
+            for (int x = 0; x < getWidth(); x++) {
+                builder.append(access(x, y));
+            }
         }
         return builder.toString();
     }
@@ -68,7 +47,7 @@ public class AsciiImage {
         final int height = getHeight();
 
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            return this.rows[y].charAt(x);
+            return this.data[x][y];
         } else {
             return 0;
         }
@@ -76,33 +55,8 @@ public class AsciiImage {
 
     public AsciiImage set(final int x, final int y, final char newChar) {
         final char oldChar = access(x, y);
-        if (oldChar != 0 && oldChar != newChar) {
-            final String line = this.rows[y];
-            final String newLine = line.substring(0, x) + newChar + line.substring(x + 1);
-            return updateRow(y, newLine);
-        } else {
-            return this;
-        }
-    }
-
-    /**
-     * Creates a new image with updated data
-     * @return The new image or old, if updating was not possible due to dimensional constraints
-     */
-    public AsciiImage updateRow(final int row, final String data) {
-        final int width  = getWidth();
-        final int height = getHeight();
-
-        if (row >= 0 && row < height) {
-            if (width == -1 || width == data.length()) {
-                final AsciiImage newImage = new AsciiImage(this.rows.length);
-                for (int i = 0; i < this.rows.length; i++) {
-                    newImage.rows[i] = (i == row) ? data : this.rows[i];
-                }
-                return newImage;
-            }
-        }
-
-        return this;
+        final AsciiImage newImage = new AsciiImage(this);
+        newImage.data[x][y] = newChar;
+        return newImage;
     }
 }

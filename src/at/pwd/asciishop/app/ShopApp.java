@@ -14,8 +14,7 @@ import java.util.List;
 public class ShopApp implements IOHelper.IOResultCallback {
     private IOHelper io;
     private AsciiImage image;
-    private List<Integer> params;
-    private int currentPosition = 0;
+    private List<String> params;
 
     public ShopApp() {
         this.io = new IOHelper();
@@ -25,98 +24,60 @@ public class ShopApp implements IOHelper.IOResultCallback {
     }
 
     public void run() {
-        // read expected lines
-        boolean unexpected =  this.io.readString(new IOHelper.IOResultCallback() {
-            @Override
-            public boolean postResult(String command, IOHelper helper) {
-                if (command.toLowerCase().equals("read")) {
-                    return helper.readNumeric(this);
-                } else {
-                    return true;
-                }
-            }
-
-            @Override
-            public boolean postResult(int result, IOHelper helper) {
-                ShopApp.this.image = new AsciiImage(result);
-                return false;
-            }
-
-            @Override
-            public boolean postResult(double result, IOHelper helper) { return true; }
-        });
-        if (unexpected) {
+        if (this.io.readStrings(this)) {
             this.io.writeLine(Strings.INVALID_INPUT);
             this.image = null;
             return;
-        }
-
-        // read image
-        final int height = this.image.getHeight();
-        this.currentPosition = 0;
-        for (int i = 0; i < height; i++) {
-            unexpected = this.io.readString(new IOHelper.IOResultCallback() {
-                @Override
-                public boolean postResult(String result, IOHelper helper) {
-                    final AsciiImage newImage = image.updateRow(currentPosition, result);
-                    if (image != newImage) {
-                        image = newImage;
-                        ShopApp.this.currentPosition++;
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
-
-                @Override
-                public boolean postResult(int result, IOHelper helper) { return true; }
-
-                @Override
-                public boolean postResult(double result, IOHelper helper) { return true; }
-            });
-            if (unexpected) {
-                this.io.writeLine(Strings.INVALID_INPUT);
-                return;
-            }
-        }
-
-        // read fill commands
-        unexpected = this.io.readStrings(this);
-        if (unexpected) {
-            this.io.writeLine(Strings.INVALID_INPUT);
-            this.image = null;
-            return;
-        }
-        if (this.image != null) {
-            this.io.writeLine(this.image.toString());
-            this.io.writeLine(this.image.getWidth() + " " + this.image.getHeight());
         }
     }
 
     @Override
     public boolean postResult(String result, IOHelper helper) {
+        if (result.toLowerCase().equals("create")) {
+            if (this.image != null) return false;
+
+            params = new LinkedList<String>();
+
+            if (this.io.readNumeric(this)) return true;
+            if (this.io.readNumeric(this)) return true;
+
+            if (params.size() != 2) return true;
+
+            this.image = new AsciiImage(Integer.valueOf(params.get(0)), Integer.valueOf(params.get(1)));
+            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
+            this.image = operation.clear();
+
+            params = null;
+            return false;
+        }
+
         if (this.image == null) {
             return false;
         }
 
         if (result.toLowerCase().equals("fill")) {
-            params = new LinkedList<Integer>();
+            params = new LinkedList<String>();
 
             if (this.io.readNumeric(this)) return true;
             if (this.io.readNumeric(this)) return true;
             if (this.io.readString(this)) return true;
 
+            if (params.size() != 3) return true;
+
+            final int x  = Integer.valueOf(params.get(0));
+            final int y  = Integer.valueOf(params.get(1));
+            final char c = params.get(2).charAt(0);
+
+            final AsciiImageOperation renderer = new AsciiImageOperation(this.image);
+            final AsciiImage newImage          = renderer.fill(x, y, c);
+            if (newImage == this.image) {
+                this.io.writeLine(Strings.INVALID_OPERATION);
+                this.image = null;
+            } else {
+                this.image = newImage;
+            }
+
             params = null;
-
-            return false;
-        } else if (result.toLowerCase().equals("uniquechars")) {
-            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
-            this.io.writeLine("" + operation.getUniqueChars());
-
-            return false;
-        } else if (result.toLowerCase().equals("flip-v")) {
-            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
-            this.image = operation.flipV();
 
             return false;
         } else if (result.toLowerCase().equals("transpose")) {
@@ -129,29 +90,71 @@ public class ShopApp implements IOHelper.IOResultCallback {
             this.io.writeLine("" + operation.isSymmetricH());
 
             return false;
-        } else if (params != null && params.size() == 2) {
-            final int x  = params.get(0);
-            final int y  = params.get(1);
-            final char c = result.charAt(0);
+        } else if (result.toLowerCase().equals("clear")) {
+            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
+            this.image = operation.clear();
 
-            final AsciiImageOperation renderer = new AsciiImageOperation(this.image);
-            final AsciiImage newImage           = renderer.fill(x, y, c);
-            if (newImage == this.image) {
-                this.io.writeLine(Strings.INVALID_OPERATION);
-                this.image = null;
-            } else {
-                this.image = newImage;
-            }
+            return false;
+        } else if (result.toLowerCase().equals("line")) {
+            params = new LinkedList<String>();
+
+            if (this.io.readNumeric(this)) return true;
+            if (this.io.readNumeric(this)) return true;
+            if (this.io.readNumeric(this)) return true;
+            if (this.io.readNumeric(this)) return true;
+            if (this.io.readString(this)) return true;
+
+            if (params.size() != 5) return true;
+
+            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
+            this.image = operation.line(new AsciiImageOperation.Vec(Integer.valueOf(params.get(0)), Integer.valueOf(params.get(1))), new AsciiImageOperation.Vec(Integer.valueOf(params.get(2)), Integer.valueOf(params.get(3))), params.get(4).charAt(0));
+
+            params = null;
+            return false;
+        } else if (result.toLowerCase().equals("load")) {
+            params = new LinkedList<String>();
+
+            if (this.io.readString(this)) return true;
+            final String endMarker = params.get(0);
+            params = null;
+
+            if (this.io.readHereDoc(endMarker, this)) return true;
+
+            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
+            this.image = operation.load(params);
+
+            return false;
+        } else if (result.toLowerCase().equals("print")) {
+            this.io.writeLine(this.image.toString() + '\n');
+
+            return false;
+        } else if (result.toLowerCase().equals("replace")) {
+            params = new LinkedList<String>();
+
+            if (this.io.readString(this)) return true;
+            if (this.io.readString(this)) return true;
+
+            if (params.size() != 2) return true;
+
+            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
+            this.image = operation.replace(params.get(0).charAt(0), params.get(1).charAt(0));
+
+            params = null;
+            return false;
+        } else if (params != null) {
+            params.add(result);
+
             return false;
         } else {
-            return true;
+            this.io.writeLine(Strings.INVALID_COMMAND);
+            return false;
         }
     }
 
     @Override
     public boolean postResult(int result, IOHelper helper) {
-        if (params != null && params.size() < 2) {
-            params.add(result);
+        if (params != null) {
+            params.add("" +result);
             return false;
         } else {
             return true;
@@ -161,5 +164,11 @@ public class ShopApp implements IOHelper.IOResultCallback {
     @Override
     public boolean postResult(double result, IOHelper helper) {
         return true;
+    }
+
+    @Override
+    public boolean postResult(List<String> lines) {
+        this.params = lines;
+        return false;
     }
 }

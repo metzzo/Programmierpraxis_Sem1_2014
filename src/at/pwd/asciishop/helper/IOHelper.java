@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Scanner;
+import java.util.List;
+import java.util.LinkedList;
 
 /**
  * This class is used to ease input/output operations on the command line
@@ -103,6 +105,19 @@ public class IOHelper {
         }
     }
 
+    public boolean readHereDoc(final String end, final IOResultCallback result) {
+        List<String> lines = new LinkedList<String>();
+        while (scanner.hasNextLine()) {
+            final String line = scanner.nextLine();
+            if (line.equals(end)) {
+                return result.postResult(lines);
+            } else if (line.length() > 0) {
+                lines.add(line);
+            }
+        }
+        return false;
+    }
+
     /**
      * writes a line to the output
      */
@@ -121,5 +136,6 @@ public class IOHelper {
         public boolean postResult(final String result, final IOHelper helper);
         public boolean postResult(final int result, final IOHelper helper);
         public boolean postResult(final double result, final IOHelper helper);
+        public boolean postResult(final List<String> lines);
     }
 }
