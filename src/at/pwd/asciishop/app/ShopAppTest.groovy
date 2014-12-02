@@ -8,6 +8,85 @@ import at.pwd.asciishop.helper.IOHelper
 class ShopAppTest extends GroovyTestCase {
     def app, input, output
     def data = [
+            [
+                    'input': 'create 40 24\n' +
+                            'load !\n' +
+                            '........................................\n' +
+                            '...................................MM...\n' +
+                            '..............................MMMMMM,...\n' +
+                            '.........................,MMMMMMMMMM....\n' +
+                            '....................,MMMMMMMMMMMMMM.....\n' +
+                            '................MMMMMMMMMMMMMMMMMMM.....\n' +
+                            '..................MMMMMMMMMMMMMMMM......\n' +
+                            '...................MMMMMMMMMMMMMMM......\n' +
+                            '..................MMMMMMMMMMMMMMM,......\n' +
+                            '................+MMMMMMMMMMMMMMMM.......\n' +
+                            '...............MMMMMMMMMMMMMMMMM........\n' +
+                            '.............MMMMMMMMMMMMMMMMMMM........\n' +
+                            '............MMMMMMMMMMMMMM.MMMM,........\n' +
+                            '..........MMMMMMMMMMMMMM+....MM.........\n' +
+                            '........+MMMMMMMMMMMMMM.................\n' +
+                            '.......MMMMMMMMMMMMMM...................\n' +
+                            '.....MMMMMMMMMMMMMMM....................\n' +
+                            '....MMMMMMMMMMMMMM......................\n' +
+                            '..MMMMMMMMMMMMMM+.......................\n' +
+                            '..MMMMMMMMMMMMM.........................\n' +
+                            '....MMMMMMMMM...........................\n' +
+                            '.....MMMMMMM............................\n' +
+                            '.......MMM..............................\n' +
+                            '........................................\n' +
+                            '!\n' +
+                            'transpose\n' +
+                            'print\n' +
+                            'explode',
+                    'output': '........................\n' +
+                            '........................\n' +
+                            '..................MM....\n' +
+                            '..................MM....\n' +
+                            '.................MMMM...\n' +
+                            '................MMMMMM..\n' +
+                            '................MMMMMM..\n' +
+                            '...............MMMMMMMM.\n' +
+                            '..............+MMMMMMMM.\n' +
+                            '..............MMMMMMMMM.\n' +
+                            '.............MMMMMMMMM..\n' +
+                            '.............MMMMMMMMM..\n' +
+                            '............MMMMMMMMM...\n' +
+                            '...........MMMMMMMMM....\n' +
+                            '...........MMMMMMMMM....\n' +
+                            '..........MMMMMMMMM.....\n' +
+                            '.....M...+MMMMMMMM+.....\n' +
+                            '.....M...MMMMMMMMM......\n' +
+                            '.....MM.MMMMMMMMM.......\n' +
+                            '.....MMMMMMMMMMMM.......\n' +
+                            '....,MMMMMMMMMMM........\n' +
+                            '....MMMMMMMMMMM.........\n' +
+                            '....MMMMMMMMMMM.........\n' +
+                            '....MMMMMMMMMM..........\n' +
+                            '....MMMMMMMMM+..........\n' +
+                            '...,MMMMMMMMM...........\n' +
+                            '...MMMMMMMMM............\n' +
+                            '...MMMMMMMMMM...........\n' +
+                            '...MMMMMMMMMM...........\n' +
+                            '...MMMMMMMMMMM..........\n' +
+                            '..MMMMMMMMMMMM..........\n' +
+                            '..MMMMMMMMMM,...........\n' +
+                            '..MMMMMMMM..............\n' +
+                            '..MMMMMM,...............\n' +
+                            '..MMMM..................\n' +
+                            '.MMM....................\n' +
+                            '.M,.....................\n' +
+                            '........................\n' +
+                            '........................\n' +
+                            '........................\n' +
+                            '\n' +
+                            'UNKNOWN COMMAND\n'
+            ],
+            [
+                'input': 'create 1 1\n' +
+                         'swag',
+                'output': 'UNKNOWN COMMAND\n'
+        ],
         [
                 'input': 'create 30 27\n' +
                         'load end\n' +
@@ -180,80 +259,6 @@ class ShopAppTest extends GroovyTestCase {
                         '\n'
         ],
         [
-                'input': 'create 40 24\n' +
-                        'load !\n' +
-                        '........................................\n' +
-                        '...................................MM...\n' +
-                        '..............................MMMMMM,...\n' +
-                        '.........................,MMMMMMMMMM....\n' +
-                        '....................,MMMMMMMMMMMMMM.....\n' +
-                        '................MMMMMMMMMMMMMMMMMMM.....\n' +
-                        '..................MMMMMMMMMMMMMMMM......\n' +
-                        '...................MMMMMMMMMMMMMMM......\n' +
-                        '..................MMMMMMMMMMMMMMM,......\n' +
-                        '................+MMMMMMMMMMMMMMMM.......\n' +
-                        '...............MMMMMMMMMMMMMMMMM........\n' +
-                        '.............MMMMMMMMMMMMMMMMMMM........\n' +
-                        '............MMMMMMMMMMMMMM.MMMM,........\n' +
-                        '..........MMMMMMMMMMMMMM+....MM.........\n' +
-                        '........+MMMMMMMMMMMMMM.................\n' +
-                        '.......MMMMMMMMMMMMMM...................\n' +
-                        '.....MMMMMMMMMMMMMMM....................\n' +
-                        '....MMMMMMMMMMMMMM......................\n' +
-                        '..MMMMMMMMMMMMMM+.......................\n' +
-                        '..MMMMMMMMMMMMM.........................\n' +
-                        '....MMMMMMMMM...........................\n' +
-                        '.....MMMMMMM............................\n' +
-                        '.......MMM..............................\n' +
-                        '........................................\n' +
-                        '!\n' +
-                        'transpose\n' +
-                        'print\n' +
-                        'explode',
-                'output': '........................\n' +
-                        '........................\n' +
-                        '..................MM....\n' +
-                        '..................MM....\n' +
-                        '.................MMMM...\n' +
-                        '................MMMMMM..\n' +
-                        '................MMMMMM..\n' +
-                        '...............MMMMMMMM.\n' +
-                        '..............+MMMMMMMM.\n' +
-                        '..............MMMMMMMMM.\n' +
-                        '.............MMMMMMMMM..\n' +
-                        '.............MMMMMMMMM..\n' +
-                        '............MMMMMMMMM...\n' +
-                        '...........MMMMMMMMM....\n' +
-                        '...........MMMMMMMMM....\n' +
-                        '..........MMMMMMMMM.....\n' +
-                        '.....M...+MMMMMMMM+.....\n' +
-                        '.....M...MMMMMMMMM......\n' +
-                        '.....MM.MMMMMMMMM.......\n' +
-                        '.....MMMMMMMMMMMM.......\n' +
-                        '....,MMMMMMMMMMM........\n' +
-                        '....MMMMMMMMMMM.........\n' +
-                        '....MMMMMMMMMMM.........\n' +
-                        '....MMMMMMMMMM..........\n' +
-                        '....MMMMMMMMM+..........\n' +
-                        '...,MMMMMMMMM...........\n' +
-                        '...MMMMMMMMM............\n' +
-                        '...MMMMMMMMMM...........\n' +
-                        '...MMMMMMMMMM...........\n' +
-                        '...MMMMMMMMMMM..........\n' +
-                        '..MMMMMMMMMMMM..........\n' +
-                        '..MMMMMMMMMM,...........\n' +
-                        '..MMMMMMMM..............\n' +
-                        '..MMMMMM,...............\n' +
-                        '..MMMM..................\n' +
-                        '.MMM....................\n' +
-                        '.M,.....................\n' +
-                        '........................\n' +
-                        '........................\n' +
-                        '........................\n' +
-                        '\n' +
-                        'UNKNOWN COMMAND\n'
-        ],
-        [
                 'input': 'create 30 27\n' +
                         'load end\n' +
                         '============,.V+.;============\n' +
@@ -412,7 +417,7 @@ class ShopAppTest extends GroovyTestCase {
             app.run()
 
             // assert
-            assert Arrays.equals(output.toByteArray(), expectedOutput.getBytes()): "Output != Expected "+output.toString()+"_"+expectedOutput.toString()
+            assert Arrays.equals(output.toByteArray(), expectedOutput.getBytes()): "Output != Expected Got: \n"+output.toString()+"\n________ Expected: ______ \n"+expectedOutput.toString()
         }
     }
 

@@ -33,8 +33,8 @@ public class ShopApp implements IOHelper.IOResultCallback {
 
     @Override
     public boolean postResult(String result, IOHelper helper) {
-        if (result.toLowerCase().equals("create")) {
-            if (this.image != null) return false;
+        if (this.image == null) {
+            if (!result.toLowerCase().equals("create")) return true;
 
             params = new LinkedList<String>();
 
@@ -116,12 +116,15 @@ public class ShopApp implements IOHelper.IOResultCallback {
 
             if (this.io.readString(this)) return true;
             final String endMarker = params.get(0);
-            params = null;
-
+            params.clear();
             if (this.io.readHereDoc(endMarker, this)) return true;
 
             final AsciiImageOperation operation = new AsciiImageOperation(this.image);
             this.image = operation.load(params);
+
+            params = null;
+
+            if (this.image == null) return true;
 
             return false;
         } else if (result.toLowerCase().equals("print")) {

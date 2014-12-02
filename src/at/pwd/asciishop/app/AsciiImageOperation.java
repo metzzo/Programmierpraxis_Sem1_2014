@@ -17,8 +17,8 @@ public class AsciiImageOperation {
 
     public AsciiImage transpose() {
         AsciiImage newImage = new AsciiImage(image.getHeight(), image.getWidth());
-        for (int x = 0; x < newImage.getHeight(); x++) {
-            for (int y = 0;  y < newImage.getWidth(); y++) {
+        for (int x = 0; x < newImage.getWidth(); x++) {
+            for (int y = 0;  y < newImage.getHeight(); y++) {
                 final char currChar = image.access(y, x);
                 newImage = newImage.set(x, y, currChar);
             }
@@ -72,7 +72,7 @@ public class AsciiImageOperation {
 
         Vec delta = from.sub(to);
         boolean swapped = false;
-        if (Math.abs(delta.y()) > Math.abs(delta.y())) {
+        if (Math.abs(delta.y()) > Math.abs(delta.x())) {
             to = to.swap();
             from = from.swap();
             delta = delta.swap();
@@ -111,9 +111,12 @@ public class AsciiImageOperation {
 
     public AsciiImage load(final List<String> lines) {
         AsciiImage newImage = image;
+        if (lines.size() != image.getHeight()) return null;
 
         for (int y = 0;  y < lines.size(); y++) {
             final String line = lines.get(y);
+            if (line.length() != image.getWidth()) return null;
+
             for (int x = 0; x < line.length(); x++) {
                 newImage = newImage.set(x, y, line.charAt(x));
             }

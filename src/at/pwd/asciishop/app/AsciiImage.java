@@ -9,6 +9,7 @@ public class AsciiImage {
 
     public AsciiImage(final int width, final int height) {
         this.data = new char[width][height];
+
     }
 
     public AsciiImage(final AsciiImage image) {
@@ -54,7 +55,6 @@ public class AsciiImage {
     }
 
     public AsciiImage set(final int x, final int y, final char newChar) {
-        final char oldChar = access(x, y);
         final AsciiImage newImage = new AsciiImage(this);
         newImage.data[x][y] = newChar;
         return newImage;

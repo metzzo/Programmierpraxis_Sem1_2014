@@ -37,7 +37,7 @@ class IOHelperTest extends GroovyTestCase {
         assert helper.readNumeric({int line, IOHelper h2 -> assert line == 200; true } as IOHelper.IOResultCallback)
     }
 
-    void testReadNumeric_Double() {
+    /*void testReadNumeric_Double() {
         // arrange
         def bytes  = "13.37".getBytes()
         def output = new ByteArrayOutputStream()
@@ -46,7 +46,7 @@ class IOHelperTest extends GroovyTestCase {
 
         // act / assert
         assert helper.readNumeric({double line, IOHelper h2 -> assert line == 13.37; true } as IOHelper.IOResultCallback)
-    }
+    }*/
 
     void testReadNumeric_String() {
         // arrange
