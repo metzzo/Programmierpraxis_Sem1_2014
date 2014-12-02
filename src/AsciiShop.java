@@ -1,6 +1,6 @@
 import at.pwd.asciishop.app.ShopApp;
-import at.pwd.asciishop.app.AsciiImage;
-import at.pwd.asciishop.app.AsciiImageOperation;
+        import at.pwd.asciishop.app.AsciiImage;
+        import at.pwd.asciishop.app.AsciiImageOperation;
 
 /**
  * Entry point for AsciiShop

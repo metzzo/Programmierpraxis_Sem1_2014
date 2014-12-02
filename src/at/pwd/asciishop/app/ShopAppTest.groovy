@@ -402,7 +402,22 @@ class ShopAppTest extends GroovyTestCase {
                         '.......XXX.......\n' +
                         '........X........\n' +
                         '\n'
-        ]
+        ],
+            [
+                    'input': 'create 9 0\n' +
+                            'print',
+                    'output': 'INPUT MISMATCH\n'
+            ],
+            [
+                    'input': 'create 17 21\n' +
+                            'line 8 0 16 10 X\n' +
+                            'line 16 10 8 20 X\n' +
+                            'line 8 20 0 10 X\n' +
+                            'line 0 10 8 0 X\n' +
+                            'fill 17 1 X\n' +
+                            'print',
+                    'output': 'OPERATION FAILED\n'
+            ]
     ]
 
     void testData() {

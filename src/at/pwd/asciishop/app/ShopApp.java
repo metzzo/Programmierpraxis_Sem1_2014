@@ -12,9 +12,14 @@ import java.util.List;
  * Created by Robert on 06.11.2014.
  */
 public class ShopApp implements IOHelper.IOResultCallback {
+    private enum ShopStates {
+        DATA_IN, DATA_MODIFY
+    }
+
     private IOHelper io;
     private AsciiImage image;
     private List<String> params;
+    private ShopStates state;
 
     public ShopApp() {
         this.io = new IOHelper();
@@ -24,6 +29,8 @@ public class ShopApp implements IOHelper.IOResultCallback {
     }
 
     public void run() {
+        state = ShopStates.DATA_IN;
+
         if (this.io.readStrings(this)) {
             this.io.writeLine(Strings.INVALID_INPUT);
             this.image = null;
@@ -33,7 +40,9 @@ public class ShopApp implements IOHelper.IOResultCallback {
 
     @Override
     public boolean postResult(String result, IOHelper helper) {
-        if (this.image == null) {
+        if (this.state == ShopStates.DATA_IN) {
+            this.state = ShopStates.DATA_MODIFY;
+
             if (!result.toLowerCase().equals("create")) return true;
 
             params = new LinkedList<String>();
@@ -43,7 +52,12 @@ public class ShopApp implements IOHelper.IOResultCallback {
 
             if (params.size() != 2) return true;
 
-            this.image = new AsciiImage(Integer.valueOf(params.get(0)), Integer.valueOf(params.get(1)));
+            final int width = Integer.valueOf(params.get(0));
+            final int height = Integer.valueOf(params.get(1));
+
+            if (width <= 0 || height <= 0) return true;
+
+            this.image = new AsciiImage(width, height);
             final AsciiImageOperation operation = new AsciiImageOperation(this.image);
             this.image = operation.clear();
 
