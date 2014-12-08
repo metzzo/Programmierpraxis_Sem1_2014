@@ -1,7 +1,5 @@
 package at.pwd.asciishop.app;
 
-import java.util.Set;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -13,6 +11,37 @@ public class AsciiImageOperation {
 
     public AsciiImageOperation(final AsciiImage image) {
         this.image = image;
+    }
+
+    public AsciiImage grow(final char growChar) {
+        AsciiImage newImage = image;
+
+        for (int x = 0;  x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                if (image.access(x, y) == '.') {
+                    if (image.access(x - 1, y) == growChar || image.access(x + 1, y) == growChar || image.access(x, y - 1) == growChar || image.access(x, y + 1) == growChar) {
+                        newImage = newImage.set(x, y, growChar);
+                    }
+                }
+            }
+        }
+
+        return newImage;
+    }
+
+    public AsciiPoint calculateCentroid(final char findChar) {
+        AsciiPoint centroid = new AsciiPoint();
+        int count = 0;
+        for (int x = 0;  x < image.getWidth(); x++) {
+            for (int y = 0;  y < image.getHeight(); y++) {
+                if (image.access(x, y) == findChar) {
+                    centroid = centroid.add(new AsciiPoint(x, y));
+                    count++;
+                }
+            }
+        }
+
+        return count > 0 ? centroid.div(count) : null;
     }
 
     public AsciiImage transpose() {
@@ -67,31 +96,31 @@ public class AsciiImageOperation {
         return newImage;
     }
 
-    public AsciiImage line(Vec from, Vec to, final char newChar) {
+    public AsciiImage line(AsciiPoint from, AsciiPoint to, final char newChar) {
         AsciiImage newImage = image;
 
-        Vec delta = from.sub(to);
+        AsciiPoint delta = from.sub(to);
         boolean swapped = false;
-        if (Math.abs(delta.y()) > Math.abs(delta.x())) {
+        if (Math.abs(delta.getY()) > Math.abs(delta.getX())) {
             to = to.swap();
             from = from.swap();
             delta = delta.swap();
             swapped = true;
         }
 
-        if (from.x() >= to.x()) {
-            final Vec tmp = to;
+        if (from.getX() >= to.getX()) {
+            final AsciiPoint tmp = to;
             to = from;
             from = tmp;
         }
 
-        Vec current = from;
-        while (current.x() <= to.x()) {
-            final int x = (int)(current.x() + .5);
-            final int y = (int)(current.y() + .5);
+        AsciiPoint current = from;
+        while (current.getX() <= to.getX()) {
+            final int x = (int)(current.getX() + .5);
+            final int y = (int)(current.getY() + .5);
 
             newImage = swapped ? newImage.set(y, x, newChar) : newImage.set(x, y, newChar);
-            current = current.add(new Vec(1, delta.y() / delta.x()));
+            current = current.add(new AsciiPoint(1, delta.getY() / delta.getX()));
         }
 
         return newImage;
@@ -111,11 +140,15 @@ public class AsciiImageOperation {
 
     public AsciiImage load(final List<String> lines) {
         AsciiImage newImage = image;
-        if (lines.size() != image.getHeight()) return null;
+        if (lines.size() != image.getHeight()) {
+            // return null;
+        }
 
         for (int y = 0;  y < lines.size(); y++) {
             final String line = lines.get(y);
-            if (line.length() != image.getWidth()) return null;
+            if (line.length() != image.getWidth()) {
+                return null;
+            }
 
             for (int x = 0; x < line.length(); x++) {
                 newImage = newImage.set(x, y, line.charAt(x));
@@ -125,30 +158,4 @@ public class AsciiImageOperation {
         return  newImage;
     }
 
-    public static class Vec {
-        private double x, y;
-
-        public Vec(final double x, final double y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public double x() {
-            return this.x;
-        }
-
-        public double y() {
-            return this.y;
-        }
-
-        public Vec sub(final Vec v) {
-            return new Vec(x() - v.x(), y() - v.y());
-        }
-        public Vec add(final Vec v) {
-            return new Vec(x() + v.x(), y() + v.y());
-        }
-        public Vec swap() {
-            return new Vec(y(), x());
-        }
-    }
 }

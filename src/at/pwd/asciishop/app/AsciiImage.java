@@ -13,7 +13,11 @@ public class AsciiImage {
     }
 
     public AsciiImage(final AsciiImage image) {
-        this.data = image.data.clone();
+        this.data = new char[image.getWidth()][];
+        for (int i = 0; i < image.data.length; i++) {
+            this.data[i] = image.data[i].clone();
+        }
+
     }
 
     /**
@@ -55,8 +59,12 @@ public class AsciiImage {
     }
 
     public AsciiImage set(final int x, final int y, final char newChar) {
-        final AsciiImage newImage = new AsciiImage(this);
-        newImage.data[x][y] = newChar;
-        return newImage;
+        if (x >= 0 && x < getWidth() && y >= 0 && y < getHeight()) {
+            final AsciiImage newImage = new AsciiImage(this);
+            newImage.data[x][y] = newChar;
+            return newImage;
+        } else {
+            return this;
+        }
     }
 }

@@ -1,5 +1,7 @@
 package at.pwd.asciishop.app;
 
+import at.pwd.asciishop.app.command.Command;
+import at.pwd.asciishop.app.command.CommandFactory;
 import at.pwd.asciishop.helper.IOHelper;
 import at.pwd.asciishop.helper.Strings;
 
@@ -20,12 +22,14 @@ public class ShopApp implements IOHelper.IOResultCallback {
     private AsciiImage image;
     private List<String> params;
     private ShopStates state;
+    private AsciiStack imageStack;
 
     public ShopApp() {
-        this.io = new IOHelper();
+        this(new IOHelper());
     }
     public ShopApp(final IOHelper ioHelper) {
         this.io = ioHelper;
+        imageStack = new AsciiStack(3);
     }
 
     public void run() {
@@ -38,126 +42,65 @@ public class ShopApp implements IOHelper.IOResultCallback {
         }
     }
 
+    public List<String> params() {
+        return this.params;
+    }
+
+    public IOHelper io() {
+        return this.io;
+    }
+
+    public AsciiStack imageStack() {
+        return imageStack;
+    }
+
+    public AsciiImage image() {
+        return this.image;
+    }
+
+    public void setImage(final AsciiImage image) {
+        this.image = image;
+    }
+
+    public boolean expectParams(final ParamRunner run) {
+        this.params = new LinkedList<String>();
+        final boolean result = run.run();
+        this.params = null;
+        return result;
+    }
+
     @Override
-    public boolean postResult(String result, IOHelper helper) {
+    public boolean postResult(final String result, final IOHelper helper) {
+        final AsciiImage image = this.image;
+        final boolean success = executeCommand(result);
+
+        if (this.image != image && this.image != null && !result.equals("create")) {
+            // image has changed
+            imageStack.push(this.image);
+        }
+
+        return success;
+    }
+
+    public boolean executeCommand(String result) {
+        final String strCommand = result.toLowerCase();
+        final Command command = CommandFactory.instance().makeCommand(strCommand);
+
         if (this.state == ShopStates.DATA_IN) {
             this.state = ShopStates.DATA_MODIFY;
 
-            if (!result.toLowerCase().equals("create")) return true;
+            if (!strCommand.equals("create")) return true;
 
-            params = new LinkedList<String>();
 
-            if (this.io.readNumeric(this)) return true;
-            if (this.io.readNumeric(this)) return true;
-
-            if (params.size() != 2) return true;
-
-            final int width = Integer.valueOf(params.get(0));
-            final int height = Integer.valueOf(params.get(1));
-
-            if (width <= 0 || height <= 0) return true;
-
-            this.image = new AsciiImage(width, height);
-            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
-            this.image = operation.clear();
-
-            params = null;
-            return false;
+            return command.execute(this);
         }
 
         if (this.image == null) {
             return false;
         }
 
-        if (result.toLowerCase().equals("fill")) {
-            params = new LinkedList<String>();
-
-            if (this.io.readNumeric(this)) return true;
-            if (this.io.readNumeric(this)) return true;
-            if (this.io.readString(this)) return true;
-
-            if (params.size() != 3) return true;
-
-            final int x  = Integer.valueOf(params.get(0));
-            final int y  = Integer.valueOf(params.get(1));
-            final char c = params.get(2).charAt(0);
-
-            final AsciiImageOperation renderer = new AsciiImageOperation(this.image);
-            final AsciiImage newImage          = renderer.fill(x, y, c);
-            if (newImage == this.image) {
-                this.io.writeLine(Strings.INVALID_OPERATION);
-                this.image = null;
-            } else {
-                this.image = newImage;
-            }
-
-            params = null;
-
-            return false;
-        } else if (result.toLowerCase().equals("transpose")) {
-            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
-            this.image = operation.transpose();
-
-            return false;
-        } else if (result.toLowerCase().equals("symmetric-h")) {
-            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
-            this.io.writeLine("" + operation.isSymmetricH());
-
-            return false;
-        } else if (result.toLowerCase().equals("clear")) {
-            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
-            this.image = operation.clear();
-
-            return false;
-        } else if (result.toLowerCase().equals("line")) {
-            params = new LinkedList<String>();
-
-            if (this.io.readNumeric(this)) return true;
-            if (this.io.readNumeric(this)) return true;
-            if (this.io.readNumeric(this)) return true;
-            if (this.io.readNumeric(this)) return true;
-            if (this.io.readString(this)) return true;
-
-            if (params.size() != 5) return true;
-
-            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
-            this.image = operation.line(new AsciiImageOperation.Vec(Integer.valueOf(params.get(0)), Integer.valueOf(params.get(1))), new AsciiImageOperation.Vec(Integer.valueOf(params.get(2)), Integer.valueOf(params.get(3))), params.get(4).charAt(0));
-
-            params = null;
-            return false;
-        } else if (result.toLowerCase().equals("load")) {
-            params = new LinkedList<String>();
-
-            if (this.io.readString(this)) return true;
-            final String endMarker = params.get(0);
-            params.clear();
-            if (this.io.readHereDoc(endMarker, this)) return true;
-
-            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
-            this.image = operation.load(params);
-
-            params = null;
-
-            if (this.image == null) return true;
-
-            return false;
-        } else if (result.toLowerCase().equals("print")) {
-            this.io.writeLine(this.image.toString() + '\n');
-
-            return false;
-        } else if (result.toLowerCase().equals("replace")) {
-            params = new LinkedList<String>();
-
-            if (this.io.readString(this)) return true;
-            if (this.io.readString(this)) return true;
-
-            if (params.size() != 2) return true;
-
-            final AsciiImageOperation operation = new AsciiImageOperation(this.image);
-            this.image = operation.replace(params.get(0).charAt(0), params.get(1).charAt(0));
-
-            params = null;
-            return false;
+        if (command != null) {
+            return command.execute(this);
         } else if (params != null) {
             params.add(result);
 
@@ -169,7 +112,7 @@ public class ShopApp implements IOHelper.IOResultCallback {
     }
 
     @Override
-    public boolean postResult(int result, IOHelper helper) {
+    public boolean postResult(final int result, final IOHelper helper) {
         if (params != null) {
             params.add("" +result);
             return false;
@@ -179,13 +122,17 @@ public class ShopApp implements IOHelper.IOResultCallback {
     }
 
     @Override
-    public boolean postResult(double result, IOHelper helper) {
+    public boolean postResult(final double result, final IOHelper helper) {
         return true;
     }
 
     @Override
-    public boolean postResult(List<String> lines) {
+    public boolean postResult(final List<String> lines) {
         this.params = lines;
         return false;
+    }
+
+    public interface ParamRunner {
+        public boolean run();
     }
 }

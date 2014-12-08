@@ -115,7 +115,7 @@ public class IOHelper {
                 lines.add(line);
             }
         }
-        return false;
+        return true;
     }
 
     /**
