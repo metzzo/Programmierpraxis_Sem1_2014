@@ -13,6 +13,31 @@ public class AsciiImageOperation {
         this.image = image;
     }
 
+    public AsciiImage straighten(final char straightChar) {
+        AsciiImage newImage = image;
+        boolean hasDone;
+        do {
+            hasDone = false;
+            for (int x = 0;  x < image.getWidth(); x++) {
+                for (int y = 0; y < image.getHeight(); y++) {
+                    if (image.access(x, y) == straightChar) {
+                        int neighbours = 0;
+                        if (image.access(x - 1, y) == straightChar) neighbours++;
+                        if (image.access(x + 1, y) == straightChar) neighbours++;
+                        if (image.access(x, y - 1) == straightChar) neighbours++;
+                        if (image.access(x, y + 1) == straightChar) neighbours++;
+                        if (neighbours <= 1) {
+                            newImage = newImage.set(x, y, '.');
+                            hasDone = true;
+                        }
+                    }
+                }
+            }
+            image = newImage;
+        } while(hasDone);
+        return newImage;
+    }
+
     public AsciiImage grow(final char growChar) {
         AsciiImage newImage = image;
 

@@ -23,6 +23,7 @@ public class CommandFactory {
         commands.put("create", CreateCommand.class);
         commands.put("fill", FillCommand.class);
         commands.put("grow", GrowCommand.class);
+        commands.put("straighten", StraightenCommand.class);
         commands.put("line", LineCommand.class);
         commands.put("load", LoadCommand.class);
         commands.put("print", PrintCommand.class);

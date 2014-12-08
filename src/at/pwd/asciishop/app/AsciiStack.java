@@ -26,14 +26,18 @@ public class AsciiStack {
 
     public AsciiImage pop() {
         final AsciiImage img = images[--pointer];
-        if (images.length - pointer > increment) {
+        if (images.length - pointer - 1 >= increment) {
             resize(images.length - increment);
         }
         return img;
     }
 
     public AsciiImage peek() {
-        return images[pointer];
+        if (empty()) {
+            return null;
+        } else {
+            return images[pointer - 1];
+        }
     }
 
     public boolean empty() {

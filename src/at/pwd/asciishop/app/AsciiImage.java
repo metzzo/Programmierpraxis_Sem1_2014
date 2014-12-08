@@ -17,7 +17,6 @@ public class AsciiImage {
         for (int i = 0; i < image.data.length; i++) {
             this.data[i] = image.data[i].clone();
         }
-
     }
 
     /**

@@ -130,6 +130,15 @@ public class IOHelper {
     }
 
     /**
+     * Skips current line if possible
+     */
+    public void skip() {
+        if (this.scanner.hasNextLine()) {
+            this.scanner.nextLine();
+        }
+    }
+
+    /**
      * Callback used to notify whether a new data input has arrived
      */
     public interface IOResultCallback {

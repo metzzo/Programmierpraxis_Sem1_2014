@@ -8,14 +8,18 @@ import at.pwd.asciishop.app.ShopApp;
 public class UndoCommand implements Command {
     @Override
     public boolean execute(final ShopApp app) {
+
+        if (!app.imageStack().empty()) {
+            app.imageStack().pop();
+            app.setImage(app.imageStack().peek());
+
+            app.io().writeLine("STACK USAGE " + app.imageStack().size() + "/" + app.imageStack().capacity());
+        }
+
         if (app.imageStack().empty()) {
             app.io().writeLine("STACK EMPTY");
-        } else {
-            app.imageStack().pop();
-
-            app.setImage(app.imageStack().pop());
-            app.io().writeLine("STACK USAGE " + (app.imageStack().size() + 1) + "/" + app.imageStack().capacity());
         }
+
         return false;
     }
 }

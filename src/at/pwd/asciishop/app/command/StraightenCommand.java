@@ -1,15 +1,12 @@
 package at.pwd.asciishop.app.command;
 
 import at.pwd.asciishop.app.AsciiImageOperation;
-import at.pwd.asciishop.app.AsciiPoint;
 import at.pwd.asciishop.app.ShopApp;
 
-import java.util.LinkedList;
-
 /**
- * Created by rfischer on 08.12.14.
+ * Created by Robert on 08.12.2014.
  */
-public class CentroidCommand implements Command {
+public class StraightenCommand implements Command {
     @Override
     public boolean execute(final ShopApp app) {
         return app.expectParams(new ShopApp.ParamRunner() {
@@ -17,12 +14,8 @@ public class CentroidCommand implements Command {
             public boolean run() {
                 if (app.io().readString(app)) return true;
 
-                if (app.params().size() != 1) return true;
-
                 final AsciiImageOperation operation = new AsciiImageOperation(app.image());
-                final AsciiPoint point = operation.calculateCentroid(app.params().get(0).charAt(0));
-                app.io().writeLine(point != null ? point.toString() : "null");
-
+                app.setImage(operation.straighten(app.params().get(0).charAt(0)));
 
                 return false;
             }

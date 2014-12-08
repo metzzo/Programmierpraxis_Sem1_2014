@@ -9,6 +9,206 @@ class ShopAppTest extends GroovyTestCase {
     def app, input, output
     def data = [
             [
+                    'input': 'create 10 10\n' +
+                            'create 20 5',
+                    'output': 'UNKNOWN COMMAND\n'
+            ],
+            [
+                    'input': 'create 5 2\n' +
+                            'undo\n' +
+                            'load END\n' +
+                            '1.*..\n' +
+                            '.*.*.\n' +
+                            'END\n' +
+                            'load END\n' +
+                            '2.+..\n' +
+                            '.+.+.\n' +
+                            'END\n' +
+                            'load END\n' +
+                            '3.-..\n' +
+                            '.-.-.\n' +
+                            'END\n' +
+                            'load END\n' +
+                            '4.#..\n' +
+                            '.#.#.\n' +
+                            'END\n' +
+                            'undo\n' +
+                            'undo\n' +
+                            'undo\n' +
+                            'print\n' +
+                            'undo\n' +
+                            'undo',
+                    'output': 'STACK EMPTY\n' +
+                            'STACK USAGE 3/6\n' +
+                            'STACK USAGE 2/3\n' +
+                            'STACK USAGE 1/3\n' +
+                            '1.*..\n' +
+                            '.*.*.\n' +
+                            '\n' +
+                            'STACK USAGE 0/3\n' +
+                            'STACK EMPTY\n'
+            ],
+            [
+                    'input': 'create 41 20\n' +
+                            'centroid .\n' +
+                            'load XXX\n' +
+                            '.........................................\n' +
+                            '.....!\\_________________________/!\\......\n' +
+                            '.....!!.........................!!.\\.....\n' +
+                            '.....!!.........................!!..\\....\n' +
+                            '.....!!.........................!!..!....\n' +
+                            '.....!!...........PP............!!..!....\n' +
+                            '.....!!.........................!!..!....\n' +
+                            '.....!!.........................!!..!....\n' +
+                            '.....!!.........................!!..!....\n' +
+                            '.....!!.........................!!../....\n' +
+                            '.....!!_________________________!!./.....\n' +
+                            '.....!/_________________________\\!/......\n' +
+                            '........__\\_________________/__/!_.......\n' +
+                            '.......!_______________________!/.)......\n' +
+                            '.....________________________....(__.....\n' +
+                            '..../oooo..oooo..oooo..oooo./!..._..)_...\n' +
+                            '.../ooooooooooooooooooooooo/./..(_)_(_)..\n' +
+                            '../ooooooooooooooooooooooo/./....(o.o)...\n' +
+                            './C=_____________________/_/....==\\o/==..\n' +
+                            '.........................................\n' +
+                            'XXX\n' +
+                            'centroid o\n' +
+                            'replace o .\n' +
+                            'centroid o',
+                    'output': '(20,10)\n' +
+                            '(16,16)\n' +
+                            'null\n'
+            ],
+            [
+                    'input' : 'create 30 27\n' +
+                            'load END\n' +
+                            '============,.V+.;============\n' +
+                            '===========;.X##..;===========\n' +
+                            '===========..####..===========\n' +
+                            '==========,.##M###.:==========\n' +
+                            '=========;.R##WW##=.;=========\n' +
+                            '=========..##MWMW##,.=========\n' +
+                            '========:.I##WWMWW#W.,========\n' +
+                            '=======;.:##WWWWWW##I.;=======\n' +
+                            '=======:.W########M##..=======\n' +
+                            '=======.:############V.;======\n' +
+                            '=======.####...,.,M###,.======\n' +
+                            '======,.###:..+++;,B..#.;=====\n' +
+                            '=====;.#;.#i+YXVVY:#V.#..:====\n' +
+                            '====:..#..##.RYYIt##...#=.,===\n' +
+                            '==;..+#;...#######W....##W..:=\n' +
+                            ':..t###......iVV=....,.+#iM#..\n' +
+                            '.B#i,#..,,..........,,..#,..#I\n' +
+                            'V#...#..,,,,,.,,,,:,,,..R#..V#\n' +
+                            ';#+.i#..,,,,,,,,,.,,,,,.iX.X#,\n' +
+                            '.i#=MV..,,,,.,,,,,,.,,,..###..\n' +
+                            ',.t##..,,,,,,,,,,,,,,:,..V##.;\n' +
+                            '..M#M..,,,,.,.,,,,,,,:,,.=##..\n' +
+                            'i###M..,...........,,:,,..###.\n' +
+                            '.####........=II;.....,,.;##R.\n' +
+                            ',...#....X####MW###B.....Wi..:\n' +
+                            '==;,##,###;........##i...#;,==\n' +
+                            '===,.IVi..,;======:..B#B#t.;==\n' +
+                            'END\n' +
+                            'clear\n' +
+                            'undo\n' +
+                            'centroid W\n' +
+                            'clear\n' +
+                            'clear\n' +
+                            'clear\n' +
+                            'clear\n' +
+                            'undo\n' +
+                            'undo\n' +
+                            'undo\n' +
+                            'centroid W\n' +
+                            'undo\n' +
+                            'centroid W\n' +
+                            'undo\n' +
+                            'undo\n',
+                    'output': 'STACK USAGE 1/3\n' +
+                            '(16,9)\n' +
+                            'STACK USAGE 4/6\n' +
+                            'STACK USAGE 3/6\n' +
+                            'STACK USAGE 2/3\n' +
+                            'null\n' +
+                            'STACK USAGE 1/3\n' +
+                            '(16,9)\n' +
+                            'STACK USAGE 0/3\n' +
+                            'STACK EMPTY\n'
+            ],
+            [
+                    'input': 'create 44 18\n' +
+                            'load /load\n' +
+                            '.....X....X......................X....X.....\n' +
+                            '....XXX..XXX....................XXX..XXX....\n' +
+                            '....XXX..XXX....................XXX..XXX....\n' +
+                            '....XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX....\n' +
+                            '....XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX....\n' +
+                            '....XXXXXXXX....................XXXXXXXX....\n' +
+                            '....XXXXXXXX....................XXXXXXXX....\n' +
+                            '....XXXXXXXX....................XXXXXXXX....\n' +
+                            '....XXXXXXXX....................XXXXXXXX....\n' +
+                            '....XXXXXXXX....................XXXXXXXX....\n' +
+                            '....XXXXXXXX....................XXXXXXXX....\n' +
+                            '....XXXXXXXX....................XXXXXXXX....\n' +
+                            '....XXXXXXXX....................XXXXXXXX....\n' +
+                            '....XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX....\n' +
+                            '..XXXXXXXXXXXX................XXXXXXXXXXXX..\n' +
+                            '.XXXXXXXXXXXXXX..............XXXXXXXXXXXXXX.\n' +
+                            '.XXXXXXXXXXXXXX..............XXXXXXXXXXXXXX.\n' +
+                            '.XXXXXXXXXXXXXX..............XXXXXXXXXXXXXX.\n' +
+                            '/load\n' +
+                            'grow X\n' +
+                            'grow X\n' +
+                            'print\n' +
+                            'grow X\n' +
+                            'grow X\n' +
+                            'undo\n' +
+                            'undo\n' +
+                            'print\n',
+                    'output': '...XXXXXXXXXX..................XXXXXXXXXX...\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXX................XXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXX................XXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXX................XXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXX................XXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.\n' +
+                            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n' +
+                            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n' +
+                            'XXXXXXXXXXXXXXXXX..........XXXXXXXXXXXXXXXXX\n' +
+                            'XXXXXXXXXXXXXXXXX..........XXXXXXXXXXXXXXXXX\n' +
+                            '\n' +
+                            'STACK USAGE 4/6\n' +
+                            'STACK USAGE 3/6\n' +
+                            '...XXXXXXXXXX..................XXXXXXXXXX...\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXX................XXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXX................XXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXX................XXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXX................XXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
+                            '.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.\n' +
+                            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n' +
+                            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n' +
+                            'XXXXXXXXXXXXXXXXX..........XXXXXXXXXXXXXXXXX\n' +
+                            'XXXXXXXXXXXXXXXXX..........XXXXXXXXXXXXXXXXX\n' +
+                            '\n'
+            ],
+            [
                     'input': 'create 40 24\n' +
                             'load !\n' +
                             '........................................\n' +
@@ -528,6 +728,34 @@ class ShopAppTest extends GroovyTestCase {
                             '....*****....\n' +
                             '....*****....\n' +
                             '....*****....\n' +
+                            '\n'
+            ],
+            [
+                    'input': 'create 30 10\n' +
+                            'load !\n' +
+                            '..............................\n' +
+                            '...X..........................\n' +
+                            '....................XXX.......\n' +
+                            '...........XXXXX......X.X.....\n' +
+                            '...........XXXXXX.....X.X.....\n' +
+                            '....X....XXXXXXX.......X......\n' +
+                            '...oX......XXXXX..............\n' +
+                            '..oooo.......XX..........XXX..\n' +
+                            '...oo.........X...............\n' +
+                            '..............................\n' +
+                            '!\n' +
+                            'straighten X\n' +
+                            'print\n',
+                    'output': '..............................\n' +
+                            '..............................\n' +
+                            '..............................\n' +
+                            '...........XXXXX..............\n' +
+                            '...........XXXXX..............\n' +
+                            '...........XXXXX..............\n' +
+                            '...o.......XXXXX..............\n' +
+                            '..oooo.......XX...............\n' +
+                            '...oo.........................\n' +
+                            '..............................\n' +
                             '\n'
             ]
     ]

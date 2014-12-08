@@ -74,7 +74,7 @@ public class ShopApp implements IOHelper.IOResultCallback {
         final AsciiImage image = this.image;
         final boolean success = executeCommand(result);
 
-        if (this.image != image && this.image != null && !result.equals("create")) {
+        if (this.image != image && this.image != null && !result.equals("create") && !result.equals("undo")) {
             // image has changed
             imageStack.push(this.image);
         }
@@ -91,7 +91,6 @@ public class ShopApp implements IOHelper.IOResultCallback {
 
             if (!strCommand.equals("create")) return true;
 
-
             return command.execute(this);
         }
 
@@ -99,7 +98,7 @@ public class ShopApp implements IOHelper.IOResultCallback {
             return false;
         }
 
-        if (command != null) {
+        if (command != null && !result.equals("create")) {
             return command.execute(this);
         } else if (params != null) {
             params.add(result);
@@ -107,6 +106,7 @@ public class ShopApp implements IOHelper.IOResultCallback {
             return false;
         } else {
             this.io.writeLine(Strings.INVALID_COMMAND);
+            this.io.skip();
             return false;
         }
     }
