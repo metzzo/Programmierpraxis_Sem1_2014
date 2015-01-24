@@ -1,62 +1,47 @@
 package at.pwd.asciishop.app;
 
-import java.util.LinkedList;
-
 /**
  * It would be better to just say: public class AsciiStack extends LinkedList<AsciiImage> { }
  * Created by rfischer on 02.12.14.
  */
 public class AsciiStack {
-    private AsciiImage[] images;
-    private int pointer;
-    private int increment;
+    private static class AsciiStackNode {
+        private AsciiImage image;
+        private AsciiStackNode next;
 
-    public AsciiStack(final int increment) {
-        this.increment = increment;
-        this.images = new AsciiImage[0];
-        this.pointer = 0;
+        public AsciiStackNode(AsciiImage image, AsciiStackNode next) {
+            this.image = image;
+            this.next = next;
+        }
+
+        int size() {
+            return 1 + ((next != null) ? next.size() : 0);
+        }
     }
 
+    private AsciiStackNode current;
+
+    public AsciiStack() { }
+
     public void push(final AsciiImage image) {
-        if (images.length <= pointer) {
-            resize(images.length + increment);
-        }
-        images[pointer++] = image;
+        current = new AsciiStackNode(image, current);
     }
 
     public AsciiImage pop() {
-        final AsciiImage img = images[--pointer];
-        if (images.length - pointer - 1 >= increment) {
-            resize(images.length - increment);
-        }
-        return img;
+        AsciiStackNode cur = current;
+        current = current.next;
+        return cur.image;
     }
 
     public AsciiImage peek() {
-        if (empty()) {
-            return null;
-        } else {
-            return images[pointer - 1];
-        }
+        return current.image;
     }
 
     public boolean empty() {
-        return pointer == 0;
+        return current == null;
     }
 
     public int size() {
-        return  pointer;
-    }
-
-    public int capacity() {
-        return images.length;
-    }
-
-    private void resize(final int newSize) {
-        final AsciiImage[] newImages = new AsciiImage[newSize];
-        for (int i = 0; i < images.length && i < newImages.length; i++) {
-            newImages[i] = images[i];
-        }
-        images = newImages;
+        return current.size();
     }
 }

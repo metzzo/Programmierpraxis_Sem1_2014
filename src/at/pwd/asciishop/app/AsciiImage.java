@@ -1,15 +1,22 @@
 package at.pwd.asciishop.app;
 
+import at.pwd.asciishop.app.operation.OperationException;
+
 /**
  * Class representing an image - it is immutable by design.
  * Created by Robert on 07.11.2014.
  */
 public class AsciiImage {
+    private String charset;
     private char[][] data;
 
-    public AsciiImage(final int width, final int height) {
-        this.data = new char[width][height];
+    public AsciiImage() {
+        this(0,0,"");
+    }
 
+    public AsciiImage(final int width, final int height, final String charset) {
+        this.data = new char[width][height];
+        this.charset = charset;
     }
 
     public AsciiImage(final AsciiImage image) {
@@ -17,11 +24,9 @@ public class AsciiImage {
         for (int i = 0; i < image.data.length; i++) {
             this.data[i] = image.data[i].clone();
         }
+        this.charset = image.charset;
     }
 
-    /**
-     * @return If w is not yet set properly '-1' is returned instead
-     */
     public int getWidth() {
         return data.length;
     }
@@ -29,6 +34,8 @@ public class AsciiImage {
     public int getHeight() {
         return data[0].length;
     }
+
+    public String getCharset() { return charset; }
 
     public String toString() {
         final StringBuilder builder = new StringBuilder();
@@ -53,17 +60,17 @@ public class AsciiImage {
         if (x >= 0 && x < width && y >= 0 && y < height) {
             return this.data[x][y];
         } else {
-            return 0;
+            return '.';
         }
     }
 
-    public AsciiImage set(final int x, final int y, final char newChar) {
-        if (x >= 0 && x < getWidth() && y >= 0 && y < getHeight()) {
+    public AsciiImage set(final int x, final int y, final char newChar) throws OperationException.InvalidOperationException {
+        if (x >= 0 && x < getWidth() && y >= 0 && y < getHeight() && (charset.indexOf(newChar) != -1)) {
             final AsciiImage newImage = new AsciiImage(this);
             newImage.data[x][y] = newChar;
             return newImage;
         } else {
-            return this;
+            throw new OperationException.InvalidOperationException();
         }
     }
 }

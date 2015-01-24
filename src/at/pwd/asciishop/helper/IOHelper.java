@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.LinkedList;
 
 /**
- * This class is used to ease input/output operations on the command line
+ * This class is used to ease input/output operations on the operation line
  * Created by Robert on 06.11.2014.
  */
 public class IOHelper {
@@ -28,7 +28,7 @@ public class IOHelper {
     }
 
     /**
-     * Reads lines from the command prompt until there is no next line or postResult returns false
+     * Reads lines from the operation prompt until there is no next line or postResult returns false
      */
     public boolean readLines(final IOResultCallback result) {
         boolean stop = false;
@@ -39,23 +39,12 @@ public class IOHelper {
     }
 
     /**
-     * Reads Strings from the command prompt until there is no next line or postResult returns false
+     * Reads Strings from the operation prompt until there is no next line or postResult returns false
      */
     public boolean readStrings(final IOResultCallback result) {
         boolean stop = false;
         while (scanner.hasNext() && !stop) {
             stop = readString(result);
-        }
-        return stop;
-    }
-
-    /**
-     * Reads Strings from the command prompt until there is no next line or postResult returns false
-     */
-    public boolean readNumerics(final IOResultCallback result) {
-        boolean stop = false;
-        while (scanner.hasNext() && !stop) {
-            stop = readNumeric(result);
         }
         return stop;
     }

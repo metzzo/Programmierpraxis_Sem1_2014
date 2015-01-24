@@ -1,7 +1,8 @@
 package at.pwd.asciishop.app;
 
-import at.pwd.asciishop.app.command.Command;
-import at.pwd.asciishop.app.command.CommandFactory;
+import at.pwd.asciishop.app.operation.Operation;
+import at.pwd.asciishop.app.operation.OperationException;
+import at.pwd.asciishop.app.operation.OperationFactory;
 import at.pwd.asciishop.helper.IOHelper;
 import at.pwd.asciishop.helper.Strings;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * Created by Robert on 06.11.2014.
  */
 public class ShopApp implements IOHelper.IOResultCallback {
-    private enum ShopStates {
+    public enum ShopStates {
         DATA_IN, DATA_MODIFY
     }
 
@@ -29,17 +30,13 @@ public class ShopApp implements IOHelper.IOResultCallback {
     }
     public ShopApp(final IOHelper ioHelper) {
         this.io = ioHelper;
-        imageStack = new AsciiStack(3);
+        imageStack = new AsciiStack();
     }
 
     public void run() {
         state = ShopStates.DATA_IN;
 
-        if (this.io.readStrings(this)) {
-            this.io.writeLine(Strings.INVALID_INPUT);
-            this.image = null;
-            return;
-        }
+        this.io.readStrings(this);
     }
 
     public List<String> params() {
@@ -55,59 +52,60 @@ public class ShopApp implements IOHelper.IOResultCallback {
     }
 
     public AsciiImage image() {
-        return this.image;
+        return this.image != null ? this.image : new AsciiImage();
     }
 
     public void setImage(final AsciiImage image) {
         this.image = image;
     }
 
-    public boolean expectParams(final ParamRunner run) {
+    public void setState(final ShopStates state) { this.state = state; }
+
+    public void expectParams(final ParamRunner run) throws OperationException {
         this.params = new LinkedList<String>();
-        final boolean result = run.run();
-        this.params = null;
-        return result;
+        try {
+            run.run();
+        } finally {
+            this.params = null;
+        }
     }
 
     @Override
     public boolean postResult(final String result, final IOHelper helper) {
-        final AsciiImage image = this.image;
-        final boolean success = executeCommand(result);
-
-        if (this.image != image && this.image != null && !result.equals("create") && !result.equals("undo")) {
-            // image has changed
-            imageStack.push(this.image);
+        if (params != null) {
+            params.add(result);
+        } else {
+            try {
+                executeCommand(result);
+            } catch (final OperationException e) {
+                this.io.skip();
+                this.io.writeLine(e.getMessage());
+            }
         }
 
-        return success;
+        return false;
     }
 
-    public boolean executeCommand(String result) {
+    public void executeCommand(String result) throws OperationException {
+        final AsciiImage image = this.image;
         final String strCommand = result.toLowerCase();
-        final Command command = CommandFactory.instance().makeCommand(strCommand);
+        final Operation command = OperationFactory.instance().makeCommand(this.state, strCommand);
 
-        if (this.state == ShopStates.DATA_IN) {
-            this.state = ShopStates.DATA_MODIFY;
-
-            if (!strCommand.equals("create")) return true;
-
-            return command.execute(this);
+        if (command != null) {
+            try {
+                command.execute(this);
+            } catch (final Exception ex) {
+                if (ex instanceof OperationException) {
+                    throw (OperationException)ex; // rethrow
+                } else {
+                    throw new OperationException.InvalidOperationException();
+                }
+            }
         }
 
-        if (this.image == null) {
-            return false;
-        }
-
-        if (command != null && !result.equals("create")) {
-            return command.execute(this);
-        } else if (params != null) {
-            params.add(result);
-
-            return false;
-        } else {
-            this.io.writeLine(Strings.INVALID_COMMAND);
-            this.io.skip();
-            return false;
+        if (this.image != image && this.image != null && command.shouldSaveOnStack()) {
+            // image has changed
+            imageStack.push(this.image);
         }
     }
 
@@ -133,6 +131,6 @@ public class ShopApp implements IOHelper.IOResultCallback {
     }
 
     public interface ParamRunner {
-        public boolean run();
+        public void run() throws OperationException;
     }
 }

@@ -1,19 +1,24 @@
 package at.pwd.asciishop.app;
 
+import at.pwd.asciishop.app.operation.OperationException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Class enables simple drawing functions like drawLabel, drawBar, ...
  * Created by Robert on 06.11.2014.
  */
-public class AsciiImageOperation {
+public class AsciiImageManipulation {
     private AsciiImage image;
 
-    public AsciiImageOperation(final AsciiImage image) {
+    public AsciiImageManipulation(final AsciiImage image) {
         this.image = image;
     }
 
-    public AsciiImage straighten(final char straightChar) {
+    public AsciiImage straighten(final char straightChar) throws OperationException.InvalidOperationException {
         AsciiImage newImage = image;
         boolean hasDone;
         do {
@@ -38,7 +43,7 @@ public class AsciiImageOperation {
         return newImage;
     }
 
-    public AsciiImage grow(final char growChar) {
+    public AsciiImage grow(final char growChar) throws OperationException.InvalidOperationException {
         AsciiImage newImage = image;
 
         for (int x = 0;  x < image.getWidth(); x++) {
@@ -54,7 +59,7 @@ public class AsciiImageOperation {
         return newImage;
     }
 
-    public AsciiPoint calculateCentroid(final char findChar) {
+    public AsciiPoint calculateCentroid(final char findChar) throws OperationException.InvalidOperationException {
         AsciiPoint centroid = new AsciiPoint();
         int count = 0;
         for (int x = 0;  x < image.getWidth(); x++) {
@@ -69,8 +74,8 @@ public class AsciiImageOperation {
         return count > 0 ? centroid.div(count) : null;
     }
 
-    public AsciiImage transpose() {
-        AsciiImage newImage = new AsciiImage(image.getHeight(), image.getWidth());
+    public AsciiImage transpose() throws OperationException.InvalidOperationException {
+        AsciiImage newImage = new AsciiImage(image.getHeight(), image.getWidth(), image.getCharset());
         for (int x = 0; x < newImage.getWidth(); x++) {
             for (int y = 0;  y < newImage.getHeight(); y++) {
                 final char currChar = image.access(y, x);
@@ -94,11 +99,11 @@ public class AsciiImageOperation {
         return true;
     }
 
-    public AsciiImage fill(final int x, final int y, final char newChar) {
+    public AsciiImage fill(final int x, final int y, final char newChar) throws OperationException.InvalidOperationException {
         return fill(x, y, newChar, this.image.access(x, y));
     }
 
-    private AsciiImage fill(final int x, final int y, final char newChar, final char oldChar) {
+    private AsciiImage fill(final int x, final int y, final char newChar, final char oldChar) throws OperationException.InvalidOperationException {
         // TODO: this should not be implemented recursively to avoid stack overflows
         final char currentChar = this.image.access(x, y);
         if (currentChar != 0 && currentChar != newChar && oldChar == currentChar) {
@@ -111,8 +116,8 @@ public class AsciiImageOperation {
         return this.image;
     }
 
-    public AsciiImage clear() {
-        AsciiImage newImage = new AsciiImage(image.getWidth(), image.getHeight());
+    public AsciiImage clear() throws OperationException.InvalidOperationException {
+        AsciiImage newImage = new AsciiImage(image);
         for (int x = 0; x < newImage.getWidth(); x++) {
             for (int y = 0; y < newImage.getHeight(); y++) {
                 newImage = newImage.set(x, y, '.');
@@ -121,7 +126,7 @@ public class AsciiImageOperation {
         return newImage;
     }
 
-    public AsciiImage line(AsciiPoint from, AsciiPoint to, final char newChar) {
+    public AsciiImage line(AsciiPoint from, AsciiPoint to, final char newChar) throws OperationException.InvalidOperationException {
         AsciiImage newImage = image;
 
         AsciiPoint delta = from.sub(to);
@@ -151,7 +156,7 @@ public class AsciiImageOperation {
         return newImage;
     }
 
-    public AsciiImage replace(final char oldChar, final char newChar) {
+    public AsciiImage replace(final char oldChar, final char newChar) throws OperationException.InvalidOperationException {
         AsciiImage newImage = image;
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
@@ -163,11 +168,8 @@ public class AsciiImageOperation {
         return newImage;
     }
 
-    public AsciiImage load(final List<String> lines) {
+    public AsciiImage load(final List<String> lines) throws OperationException.InvalidOperationException {
         AsciiImage newImage = image;
-        if (lines.size() != image.getHeight()) {
-            // return null;
-        }
 
         for (int y = 0;  y < lines.size(); y++) {
             final String line = lines.get(y);
@@ -183,4 +185,48 @@ public class AsciiImageOperation {
         return  newImage;
     }
 
+    public enum FilterType {
+        MEDIAN
+    }
+
+    private class MedianComparator implements Comparator<Character> {
+        @Override
+        public int compare(final Character o1, final Character o2) {
+            final String charset = image.getCharset();
+            final int i1 = charset.indexOf(o1), i2 = charset.indexOf(o2);
+            if (i1 > i2) {
+                return 1;
+            } else if (i1 < i2) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    public AsciiImage filter(FilterType type) throws OperationException.InvalidOperationException {
+        final Comparator<Character> medianComparator = new MedianComparator();
+
+        AsciiImage newImage = image;
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0;  y < image.getHeight(); y++) {
+                switch (type) {
+                    case MEDIAN: {
+                        final List<Character> characters = new ArrayList<Character>();
+                        for (int relx = -1; relx <= 1; relx++) {
+                            for (int rely = -1; rely <= 1; rely++) {
+                                characters.add(image.access(x + relx, y + rely));
+                            }
+                        }
+                        Collections.sort(characters, medianComparator);
+
+                        final char newChar  = characters.get(characters.size() / 2);
+                        newImage = newImage.set(x, y, newChar);
+                        break;
+                    }
+                }
+            }
+        }
+        return newImage;
+    }
 }

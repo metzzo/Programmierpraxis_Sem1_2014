@@ -1,5 +1,6 @@
 package at.pwd.asciishop.app
 
+import at.pwd.asciishop.app.operation.OperationException
 import at.pwd.asciishop.helper.IOHelper
 
 /**
@@ -9,12 +10,77 @@ class ShopAppTest extends GroovyTestCase {
     def app, input, output
     def data = [
             [
-                    'input': 'create 10 10\n' +
-                            'create 20 5',
-                    'output': 'UNKNOWN COMMAND\n'
+                    'input': 'create 10',
+                    'output': 'INPUT MISMATCH\n'
             ],
             [
-                    'input': 'create 5 2\n' +
+                    'input': 'create YOLO 10 a',
+                    'output': 'INPUT MISMATCH\n'
+            ],
+            [
+                    'input': 'create 30 27 #WMBRXVYIti+=;:,.\n' +
+                            'load end\n' +
+                            '============,.V+.;============\n' +
+                            '===========;.X##..;===========\n' +
+                            '===========..####..===========\n' +
+                            '==========,.##M###.:==========\n' +
+                            '=========;.R##WW##=.;=========\n' +
+                            '=========..##MWMW##,.=========\n' +
+                            '========:.I##WWMWW#W.,========\n' +
+                            '=======;.:##WWWWWW##I.;=======\n' +
+                            '=======:.W########M##..=======\n' +
+                            '=======.:############V.;======\n' +
+                            '=======.####...,.,M###,.======\n' +
+                            '======,.###:..+++;,B..#.;=====\n' +
+                            '=====;.#;.#i+YXVVY:#V.#..:====\n' +
+                            '====:..#..##.RYYIt##...#=.,===\n' +
+                            '==;..+#;...#######W....##W..:=\n' +
+                            ':..t###......iVV=....,.+#iM#..\n' +
+                            '.B#i,#..,,..........,,..#,..#I\n' +
+                            'V#...#..,,,,,.,,,,:,,,..R#..V#\n' +
+                            ';#+.i#..,,,,,,,,,.,,,,,.iX.X#,\n' +
+                            '.i#=MV..,,,,.,,,,,,.,,,..###..\n' +
+                            ',.t##..,,,,,,,,,,,,,,:,..V##.;\n' +
+                            '..M#M..,,,,.,.,,,,,,,:,,.=##..\n' +
+                            'i###M..,...........,,:,,..###.\n' +
+                            '.####........=II;.....,,.;##R.\n' +
+                            ',...#....X####MW###B.....Wi..:\n' +
+                            '==;,##,###;........##i...#;,==\n' +
+                            '===,.IVi..,;======:..B#B#t.;==\n' +
+                            'end\n' +
+                            'filter median\n' +
+                            'print',
+                    'output': '.==========,..+...;==========.\n' +
+                            '===========;,V##;.;===========\n' +
+                            '===========,;####.:===========\n' +
+                            '==========;,######:;==========\n' +
+                            '=========;,R##WW##=:;=========\n' +
+                            '=========:;##WWWW#W;,=========\n' +
+                            '========::I##WWWWW#W,;========\n' +
+                            '=======;::###WWWWW##I,;=======\n' +
+                            '=======::W###########;;=======\n' +
+                            '=======::############V,;======\n' +
+                            '=======:####:.++++M##V,;======\n' +
+                            '======;;###i:.+++;YBBV.,:=====\n' +
+                            '=====:,,;##i++YYItYV...;:;====\n' +
+                            '====;:;;..i#RXXVVVWV...==::===\n' +
+                            ':==;=++.....RVVVYIt....+Wi=:=.\n' +
+                            '.;=;i#+......iVV=......+WM,.:.\n' +
+                            '.:i,t#...,....,,,...,,..iR,.I.\n' +
+                            ';Vi,i,..,,,,,,,,,,,,,,..ii..VI\n' +
+                            ';i+=ii..,,,,,,,,,,,,,,,.iXXVV.\n' +
+                            '.+itVi..,,,,,,,,,,,,,,,..V##;.\n' +
+                            '.,tMM..,,,,,,,,,,,,,,,,..V##..\n' +
+                            '.i##M..,,,,,.,,,,,,,,,,,.=##;.\n' +
+                            '.M##M.........,,,..,,,,,,;##R.\n' +
+                            '.i##M........=II;.....,..;W#:.\n' +
+                            '.;;##,...;;..=II;........;i=:.\n' +
+                            ',=,,,Ii,i;;;=======:i...ti;;;:\n' +
+                            '.=,,,,i,..................,,;.\n' +
+                            '\n'
+            ],
+            [
+                    'input': 'create 5 2 1234-.*+#\n' +
                             'undo\n' +
                             'load END\n' +
                             '1.*..\n' +
@@ -37,19 +103,15 @@ class ShopAppTest extends GroovyTestCase {
                             'undo\n' +
                             'print\n' +
                             'undo\n' +
-                            'undo',
+                            'undo\n',
                     'output': 'STACK EMPTY\n' +
-                            'STACK USAGE 3/6\n' +
-                            'STACK USAGE 2/3\n' +
-                            'STACK USAGE 1/3\n' +
                             '1.*..\n' +
                             '.*.*.\n' +
                             '\n' +
-                            'STACK USAGE 0/3\n' +
                             'STACK EMPTY\n'
             ],
             [
-                    'input': 'create 41 20\n' +
+                    'input': 'create 41 20 RPGOEC=o!\\(/)_.\n' +
                             'centroid .\n' +
                             'load XXX\n' +
                             '.........................................\n' +
@@ -81,7 +143,7 @@ class ShopAppTest extends GroovyTestCase {
                             'null\n'
             ],
             [
-                    'input' : 'create 30 27\n' +
+                    'input' : 'create 30 27 #WMBRXVYIti+=;:,.\n' +
                             'load END\n' +
                             '============,.V+.;============\n' +
                             '===========;.X##..;===========\n' +
@@ -126,19 +188,13 @@ class ShopAppTest extends GroovyTestCase {
                             'centroid W\n' +
                             'undo\n' +
                             'undo\n',
-                    'output': 'STACK USAGE 1/3\n' +
-                            '(16,9)\n' +
-                            'STACK USAGE 4/6\n' +
-                            'STACK USAGE 3/6\n' +
-                            'STACK USAGE 2/3\n' +
+                    'output': '(16,9)\n' +
                             'null\n' +
-                            'STACK USAGE 1/3\n' +
                             '(16,9)\n' +
-                            'STACK USAGE 0/3\n' +
                             'STACK EMPTY\n'
             ],
             [
-                    'input': 'create 44 18\n' +
+                    'input': 'create 44 18 .X\n' +
                             'load /load\n' +
                             '.....X....X......................X....X.....\n' +
                             '....XXX..XXX....................XXX..XXX....\n' +
@@ -186,8 +242,6 @@ class ShopAppTest extends GroovyTestCase {
                             'XXXXXXXXXXXXXXXXX..........XXXXXXXXXXXXXXXXX\n' +
                             'XXXXXXXXXXXXXXXXX..........XXXXXXXXXXXXXXXXX\n' +
                             '\n' +
-                            'STACK USAGE 4/6\n' +
-                            'STACK USAGE 3/6\n' +
                             '...XXXXXXXXXX..................XXXXXXXXXX...\n' +
                             '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
                             '..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..\n' +
@@ -209,7 +263,7 @@ class ShopAppTest extends GroovyTestCase {
                             '\n'
             ],
             [
-                    'input': 'create 40 24\n' +
+                    'input': 'create 40 24 M+,X.\n' +
                             'load !\n' +
                             '........................................\n' +
                             '...................................MM...\n' +
@@ -241,7 +295,7 @@ class ShopAppTest extends GroovyTestCase {
                             '(4,8)\n'
             ],
             [
-                    'input': 'create 40 24\n' +
+                    'input': 'create 40 24 M+,X.\n' +
                             'load !\n' +
                             '........................................\n' +
                             '...................................MM...\n' +
@@ -315,12 +369,12 @@ class ShopAppTest extends GroovyTestCase {
                             'UNKNOWN COMMAND\n'
             ],
             [
-                'input': 'create 1 1\n' +
+                'input': 'create 1 1 a\n' +
                          'swag',
                 'output': 'UNKNOWN COMMAND\n'
         ],
         [
-                'input': 'create 30 27\n' +
+                'input': 'create 30 27 #WMBRXVYIti+=;:,.\n' +
                         'load end\n' +
                         '============,.V+.;============\n' +
                         '===========;.X##..;===========\n' +
@@ -411,7 +465,7 @@ class ShopAppTest extends GroovyTestCase {
                         '\n'
         ],
         [
-                'input': 'create 20 10\n' +
+                'input': 'create 20 10 .xo#\n' +
                         'line 1 1 18 4 x\n' +
                         'line 1 3 18 6 o\n' +
                         'line 1 8 18 8 #\n' +
@@ -429,7 +483,7 @@ class ShopAppTest extends GroovyTestCase {
                         '\n'
         ],
         [
-                'input': 'create 30 27\n' +
+                'input': 'create 30 27 #WMBRXVYIti+=;:,.\n' +
                         'load EOI\n' +
                         '============,.V+.;============\n' +
                         '===========;.X##..;===========\n' +
@@ -491,7 +545,7 @@ class ShopAppTest extends GroovyTestCase {
                         '\n'
         ],
         [
-                'input': 'create 30 27\n' +
+                'input': 'create 30 27 #WMBRXVYIti+=;:,.\n' +
                         'load end\n' +
                         '============,.V+.;============\n' +
                         '===========;.X##..;===========\n' +
@@ -524,7 +578,7 @@ class ShopAppTest extends GroovyTestCase {
                 'output': 'INPUT MISMATCH\n'
         ],
         [
-                'input': 'create 8 5\n' +
+                'input': 'create 8 5 W.#\n' +
                         'line 0 0 7 0 W\n' +
                         'line 7 4 0 4 W\n' +
                         'line 0 0 0 4 #\n' +
@@ -538,7 +592,7 @@ class ShopAppTest extends GroovyTestCase {
                         '\n'
         ],
         [
-                'input': 'create 17 21\n' +
+                'input': 'create 17 21 X.o+#\n' +
                         'line 8 0 16 10 X\n' +
                         'line 16 10 8 20 X\n' +
                         'line 8 20 0 10 X\n' +
@@ -577,7 +631,7 @@ class ShopAppTest extends GroovyTestCase {
                         '\n'
         ],
         [
-                'input': 'create 17 21\n' +
+                'input': 'create 17 21 X.\n' +
                         'line 8 0 16 10 X\n' +
                         'line 16 10 8 20 X\n' +
                         'line 8 20 0 10 X\n' +
@@ -636,22 +690,44 @@ class ShopAppTest extends GroovyTestCase {
                         '\n'
         ],
             [
-                    'input': 'create 9 0\n' +
-                            'print',
-                    'output': 'INPUT MISMATCH\n'
+                    'input': 'create 9 0 a\n' +
+                             'print',
+                    'output': 'INPUT MISMATCH\nUNKNOWN COMMAND\n'
             ],
             [
-                    'input': 'create 17 21\n' +
+                    'input': 'create 17 21 X\n' +
                             'line 8 0 16 10 X\n' +
                             'line 16 10 8 20 X\n' +
                             'line 8 20 0 10 X\n' +
                             'line 0 10 8 0 X\n' +
                             'fill 17 1 X\n' +
                             'print',
-                    'output': 'OPERATION FAILED\n'
+                    'output': 'OPERATION FAILED\n' +
+                            '........X........\n' +
+                            '.......X.X.......\n' +
+                            '......X...X......\n' +
+                            '......X...X......\n' +
+                            '.....X.....X.....\n' +
+                            '....X.......X....\n' +
+                            '...X.........X...\n' +
+                            '..X...........X..\n' +
+                            '..X...........X..\n' +
+                            '.X.............X.\n' +
+                            'X...............X\n' +
+                            '.X.............X.\n' +
+                            '..X...........X..\n' +
+                            '..X...........X..\n' +
+                            '...X.........X...\n' +
+                            '....X.......X....\n' +
+                            '.....X.....X.....\n' +
+                            '......X...X......\n' +
+                            '......X...X......\n' +
+                            '.......X.X.......\n' +
+                            '........X........\n' +
+                            '\n'
             ],
             [
-                    'input': 'create 41 10\n' +
+                    'input': 'create 41 10 .B\n' +
                             'clear\n' +
                             'line 0 0 40 8 B\n' +
                             'clear\n' +
@@ -669,7 +745,6 @@ class ShopAppTest extends GroovyTestCase {
                             '.........................................\n' +
                             '.........................................\n' +
                             '\n' +
-                            'STACK USAGE 2/3\n' +
                             'BBB......................................\n' +
                             '...BBBBB.................................\n' +
                             '........BBBBB............................\n' +
@@ -683,7 +758,7 @@ class ShopAppTest extends GroovyTestCase {
                             '\n'
             ],
             [
-                    'input': 'create 13 8\n' +
+                    'input': 'create 13 8 #.*\n' +
                             'line 5 0 0 2 #\n' +
                             'line 7 0 12 2 #\n' +
                             'line 3 4 3 7 #\n' +
@@ -731,7 +806,7 @@ class ShopAppTest extends GroovyTestCase {
                             '\n'
             ],
             [
-                    'input': 'create 30 10\n' +
+                    'input': 'create 30 10 Xo.\n' +
                             'load !\n' +
                             '..............................\n' +
                             '...X..........................\n' +
@@ -757,6 +832,54 @@ class ShopAppTest extends GroovyTestCase {
                             '...oo.........................\n' +
                             '..............................\n' +
                             '\n'
+            ],
+            [
+                    'input': 'create 41 20 RPGOEC=o!\\(/)_.\n' +
+                            'load XXX\n' +
+                            '.........................................\n' +
+                            '.....!\\_________________________/!\\......\n' +
+                            '.....!!.........................!!.\\.....\n' +
+                            '.....!!.........................!!..\\....\n' +
+                            '.....!!.........................!!..!....\n' +
+                            '.....!!...........PP............!!..!....\n' +
+                            '.....!!.........................!!..!....\n' +
+                            '.....!!.........................!!..!....\n' +
+                            '.....!!.........................!!..!....\n' +
+                            '.....!!.........................!!../....\n' +
+                            '.....!!_________________________!!./.....\n' +
+                            '.....!/_________________________\\!/......\n' +
+                            '........__\\_________________/__/!_.......\n' +
+                            '.......!_______________________!/.)......\n' +
+                            '.....________________________....(__.....\n' +
+                            '..../oooo..oooo..oooo..oooo./!..._..)_...\n' +
+                            '.../ooooooooooooooooooooooo/./..(_)_(_)..\n' +
+                            '../ooooooooooooooooooooooo/./....(o.o)...\n' +
+                            './C=_____________________/_/....==\\o/==..\n' +
+                            '.........................................\n' +
+                            'XXX\n' +
+                            'undo\n' +
+                            'print\n' +
+                            'undo',
+                    'output': '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n' +
+                            '.........................................\n'
             ]
     ]
 
@@ -768,8 +891,12 @@ class ShopAppTest extends GroovyTestCase {
 
             // act
             setup(input)
-            System.out.println("Input: " + input);
-            app.run()
+            System.out.println("-------------------------\nInput: " + input);
+            try {
+                app.run()
+            } catch (OperationException e) {
+                e.printStackTrace()
+            }
 
             // assert
             assert Arrays.equals(output.toByteArray(), expectedOutput.getBytes()): "Output != Expected Got: \n"+output.toString()+"\n________ Expected: ______ \n"+expectedOutput.toString()
