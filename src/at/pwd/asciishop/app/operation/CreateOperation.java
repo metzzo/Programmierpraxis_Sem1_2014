@@ -27,7 +27,6 @@ public class CreateOperation implements Operation {
 
                 final AsciiImageManipulation operation = new AsciiImageManipulation(new AsciiImage(width, height, charset));
                 app.setImage(operation.clear());
-                app.setState(ShopApp.ShopStates.DATA_MODIFY);
             }
         });
     }

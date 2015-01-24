@@ -10,4 +10,5 @@ public abstract class Strings {
     public static final String INVALID_COMMAND   = "UNKNOWN COMMAND";
 
     public static final String STACK_EMPTY       = "STACK EMPTY";
+    public static final String NO_SAVED_IMAGES   = "NO SAVED IMAGES\n";
 }

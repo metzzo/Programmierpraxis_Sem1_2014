@@ -2,10 +2,7 @@ package at.pwd.asciishop.app;
 
 import at.pwd.asciishop.app.operation.OperationException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class enables simple drawing functions like drawLabel, drawBar, ...
@@ -233,7 +230,7 @@ public class AsciiImageManipulation {
                             }
                         }
 
-                        final char newChar  = image.getCharset().charAt((int)(sum/9.0 + .5));
+                        final char newChar  = image.getCharset().charAt((int) (sum / 9.0 + .5));
                         newImage = newImage.set(x, y, newChar);
                         break;
                     }
@@ -265,5 +262,20 @@ public class AsciiImageManipulation {
 
     public AsciiImage histogram() {
         return image;
+    }
+
+    public int getUniqueChars() {
+        int uniqueChars = 0;
+        final Set<Character> chars = new HashSet<Character>();
+        for (int x = 0; x < this.image.getWidth(); x++) {
+            for (int y = 0; y < this.image.getHeight(); y++) {
+                final char currentChar = this.image.access(x, y);
+                if (!chars.contains(currentChar)) {
+                    uniqueChars++;
+                    chars.add(currentChar);
+                }
+            }
+        }
+        return uniqueChars;
     }
 }

@@ -1,5 +1,7 @@
 package at.pwd.asciishop.app;
 
+import at.pwd.asciishop.app.metrics.Metric;
+import at.pwd.asciishop.app.metrics.MetricSet;
 import at.pwd.asciishop.app.operation.Operation;
 import at.pwd.asciishop.app.operation.OperationException;
 import at.pwd.asciishop.app.operation.OperationFactory;
@@ -15,15 +17,11 @@ import java.util.List;
  * Created by Robert on 06.11.2014.
  */
 public class ShopApp implements IOHelper.IOResultCallback {
-    public enum ShopStates {
-        DATA_IN, DATA_MODIFY
-    }
-
     private IOHelper io;
     private AsciiImage image, defaultImage;
     private List<String> params;
-    private ShopStates state;
     private AsciiStack imageStack;
+    private MetricSet<AsciiImage> savedImages;
 
     public ShopApp() {
         this(new IOHelper());
@@ -31,11 +29,10 @@ public class ShopApp implements IOHelper.IOResultCallback {
     public ShopApp(final IOHelper ioHelper) {
         this.io = ioHelper;
         imageStack = new AsciiStack();
+        savedImages = new MetricSet<AsciiImage>();
     }
 
     public void run() {
-        state = ShopStates.DATA_IN;
-
         this.io.readStrings(this);
     }
 
@@ -62,7 +59,9 @@ public class ShopApp implements IOHelper.IOResultCallback {
         this.image = image;
     }
 
-    public void setState(final ShopStates state) { this.state = state; }
+    public MetricSet<AsciiImage> getSavedImages() {
+        return savedImages;
+    }
 
     public void expectParams(final ParamRunner run) throws OperationException {
         this.params = new LinkedList<String>();
@@ -93,7 +92,7 @@ public class ShopApp implements IOHelper.IOResultCallback {
     public void executeCommand(String result) throws OperationException {
         final AsciiImage image = this.image;
         final String strCommand = result.toLowerCase();
-        final Operation command = OperationFactory.instance().makeCommand(this.state, strCommand);
+        final Operation command = OperationFactory.instance().makeCommand(strCommand);
 
         if (command != null) {
             try {

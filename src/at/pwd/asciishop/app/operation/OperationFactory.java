@@ -9,9 +9,6 @@ import java.util.Map;
  * Created by rfischer on 08.12.14.
  */
 public class OperationFactory {
-    private class Operations {
-        private Map<String, Class<? extends Operation>> commands = new HashMap<String, Class<? extends Operation>>();
-    }
     private static OperationFactory factory = null;
 
     public static OperationFactory instance() {
@@ -19,37 +16,32 @@ public class OperationFactory {
         return factory;
     }
 
-    private Map<ShopApp.ShopStates, Operations> commands;
+    private Map<String, Class<? extends Operation>> commands;
     private OperationFactory() {
-        commands = new HashMap<ShopApp.ShopStates, Operations>();
-
-        final Operations DataModify = new Operations();
-        DataModify.commands.put("clear", ClearOperation.class);
-        DataModify.commands.put("centroid", CentroidOperation.class);
-        DataModify.commands.put("fill", FillOperation.class);
-        DataModify.commands.put("grow", GrowOperation.class);
-        DataModify.commands.put("straighten", StraightenOperation.class);
-        DataModify.commands.put("line", LineOperation.class);
-        DataModify.commands.put("load", LoadOperation.class);
-        DataModify.commands.put("print", PrintOperation.class);
-        DataModify.commands.put("replace", ReplaceOperation.class);
-        DataModify.commands.put("symmetric-h", SymmetricOperation.class);
-        DataModify.commands.put("transpose", TransposeOperation.class);
-        DataModify.commands.put("undo", UndoOperation.class);
-        DataModify.commands.put("filter", FilterOperation.class);
-        DataModify.commands.put("binary", BinaryOperation.class);
-        DataModify.commands.put("histogram", HistogramOperation.class);
-
-        final Operations DataIn = new Operations();
-        DataIn.commands.put("create", CreateOperation.class);
-
-        commands.put(ShopApp.ShopStates.DATA_IN, DataIn);
-        commands.put(ShopApp.ShopStates.DATA_MODIFY, DataModify);
+        commands = new HashMap<String, Class<? extends Operation>>();
+        commands.put("clear", ClearOperation.class);
+        commands.put("centroid", CentroidOperation.class);
+        commands.put("fill", FillOperation.class);
+        commands.put("grow", GrowOperation.class);
+        commands.put("straighten", StraightenOperation.class);
+        commands.put("line", LineOperation.class);
+        commands.put("load", LoadOperation.class);
+        commands.put("print", PrintOperation.class);
+        commands.put("replace", ReplaceOperation.class);
+        commands.put("symmetric-h", SymmetricOperation.class);
+        commands.put("transpose", TransposeOperation.class);
+        commands.put("undo", UndoOperation.class);
+        commands.put("filter", FilterOperation.class);
+        commands.put("binary", BinaryOperation.class);
+        commands.put("create", CreateOperation.class);
+        commands.put("save", SaveOperation.class);
+        commands.put("search", SearchOperation.class);
+        commands.put("printsaved", PrintSavedOperation.class);
     }
 
-    public Operation makeCommand(final ShopApp.ShopStates state, final String command) {
+    public Operation makeCommand(final String command) {
         try {
-            return commands.get(state).commands.get(command).newInstance();
+            return commands.get(command).newInstance();
         } catch (final Exception ex) {
             return new InvalidOperation();
         }
