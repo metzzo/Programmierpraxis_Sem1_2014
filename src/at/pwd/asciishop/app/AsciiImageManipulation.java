@@ -229,4 +229,28 @@ public class AsciiImageManipulation {
         }
         return newImage;
     }
+
+    public AsciiImage threshold(final char thresChar) throws OperationException.InvalidOperationException {
+        AsciiImage newImage = image;
+        final String charset = image.getCharset();
+        final int thresPosition = charset.indexOf(thresChar);
+        if (thresPosition == -1) throw new OperationException.InvalidOperationException();
+
+        final char white = image.background(), black = charset.charAt(0);
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                char curChar = image.access(x,y);
+                if (charset.indexOf(curChar) < thresPosition) {
+                    newImage = newImage.set(x, y, black);
+                } else {
+                    newImage = newImage.set(x, y, white);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    public AsciiImage histogram() {
+        return image;
+    }
 }

@@ -37,6 +37,8 @@ public class OperationFactory {
         DataModify.commands.put("transpose", TransposeOperation.class);
         DataModify.commands.put("undo", UndoOperation.class);
         DataModify.commands.put("filter", FilterOperation.class);
+        DataModify.commands.put("binary", BinaryOperation.class);
+        DataModify.commands.put("histogram", HistogramOperation.class);
 
         final Operations DataIn = new Operations();
         DataIn.commands.put("create", CreateOperation.class);
