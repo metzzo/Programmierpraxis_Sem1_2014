@@ -186,7 +186,8 @@ public class AsciiImageManipulation {
     }
 
     public enum FilterType {
-        MEDIAN
+        MEDIAN,
+        AVERAGE
     }
 
     private class MedianComparator implements Comparator<Character> {
@@ -221,6 +222,18 @@ public class AsciiImageManipulation {
                         Collections.sort(characters, medianComparator);
 
                         final char newChar  = characters.get(characters.size() / 2);
+                        newImage = newImage.set(x, y, newChar);
+                        break;
+                    }
+                    case AVERAGE: {
+                        int sum = 0;
+                        for (int relx = -1; relx <= 1; relx++) {
+                            for (int rely = -1; rely <= 1; rely++) {
+                                sum += image.getCharset().indexOf(image.access(x + relx, y + rely));
+                            }
+                        }
+
+                        final char newChar  = image.getCharset().charAt((int)(sum/9.0 + .5));
                         newImage = newImage.set(x, y, newChar);
                         break;
                     }

@@ -17,10 +17,10 @@ public class FilterOperation implements Operation {
 
                 final String type = app.params().get(0);
 
-                if (!type.equals("median")) throw new OperationException.InvalidInputException();
+                if (!type.equals("median") && !type.equals("average")) throw new OperationException.InvalidInputException();
 
                 final AsciiImageManipulation operation = new AsciiImageManipulation(app.image());
-                app.setImage(operation.filter(AsciiImageManipulation.FilterType.MEDIAN));
+                app.setImage(operation.filter(type.equals("median") ? AsciiImageManipulation.FilterType.MEDIAN : AsciiImageManipulation.FilterType.AVERAGE));
 
             }
         });
