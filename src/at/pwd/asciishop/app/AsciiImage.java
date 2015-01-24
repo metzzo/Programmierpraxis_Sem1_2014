@@ -37,6 +37,10 @@ public class AsciiImage {
 
     public String getCharset() { return charset; }
 
+    public char background() {
+        return getCharset().length() > 0 ? getCharset().charAt(getCharset().length() - 1) : '.';
+    }
+
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         for (int y = 0; y < getHeight(); y++) {
@@ -60,7 +64,7 @@ public class AsciiImage {
         if (x >= 0 && x < width && y >= 0 && y < height) {
             return this.data[x][y];
         } else {
-            return '.';
+            return background();
         }
     }
 

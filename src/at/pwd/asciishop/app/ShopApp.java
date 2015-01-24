@@ -20,7 +20,7 @@ public class ShopApp implements IOHelper.IOResultCallback {
     }
 
     private IOHelper io;
-    private AsciiImage image;
+    private AsciiImage image, defaultImage;
     private List<String> params;
     private ShopStates state;
     private AsciiStack imageStack;
@@ -52,10 +52,13 @@ public class ShopApp implements IOHelper.IOResultCallback {
     }
 
     public AsciiImage image() {
-        return this.image != null ? this.image : new AsciiImage();
+        return this.image != null ? this.image : defaultImage;
     }
 
     public void setImage(final AsciiImage image) {
+        if (defaultImage == null) {
+            defaultImage = image;
+        }
         this.image = image;
     }
 
@@ -80,6 +83,7 @@ public class ShopApp implements IOHelper.IOResultCallback {
             } catch (final OperationException e) {
                 this.io.skip();
                 this.io.writeLine(e.getMessage());
+                return true;
             }
         }
 

@@ -194,7 +194,7 @@ class ShopAppTest extends GroovyTestCase {
                             'STACK EMPTY\n'
             ],
             [
-                    'input': 'create 44 18 .X\n' +
+                    'input': 'create 44 18 X.\n' +
                             'load /load\n' +
                             '.....X....X......................X....X.....\n' +
                             '....XXX..XXX....................XXX..XXX....\n' +
@@ -465,7 +465,7 @@ class ShopAppTest extends GroovyTestCase {
                         '\n'
         ],
         [
-                'input': 'create 20 10 .xo#\n' +
+                'input': 'create 20 10 xo#.\n' +
                         'line 1 1 18 4 x\n' +
                         'line 1 3 18 6 o\n' +
                         'line 1 8 18 8 #\n' +
@@ -578,7 +578,7 @@ class ShopAppTest extends GroovyTestCase {
                 'output': 'INPUT MISMATCH\n'
         ],
         [
-                'input': 'create 8 5 W.#\n' +
+                'input': 'create 8 5 W#.\n' +
                         'line 0 0 7 0 W\n' +
                         'line 7 4 0 4 W\n' +
                         'line 0 0 0 4 #\n' +
@@ -592,7 +592,7 @@ class ShopAppTest extends GroovyTestCase {
                         '\n'
         ],
         [
-                'input': 'create 17 21 X.o+#\n' +
+                'input': 'create 17 21 Xo+#.\n' +
                         'line 8 0 16 10 X\n' +
                         'line 16 10 8 20 X\n' +
                         'line 8 20 0 10 X\n' +
@@ -692,42 +692,20 @@ class ShopAppTest extends GroovyTestCase {
             [
                     'input': 'create 9 0 a\n' +
                              'print',
-                    'output': 'INPUT MISMATCH\nUNKNOWN COMMAND\n'
+                    'output': 'INPUT MISMATCH\n'
             ],
             [
-                    'input': 'create 17 21 X\n' +
+                    'input': 'create 17 21 X.\n' +
                             'line 8 0 16 10 X\n' +
                             'line 16 10 8 20 X\n' +
                             'line 8 20 0 10 X\n' +
                             'line 0 10 8 0 X\n' +
                             'fill 17 1 X\n' +
                             'print',
-                    'output': 'OPERATION FAILED\n' +
-                            '........X........\n' +
-                            '.......X.X.......\n' +
-                            '......X...X......\n' +
-                            '......X...X......\n' +
-                            '.....X.....X.....\n' +
-                            '....X.......X....\n' +
-                            '...X.........X...\n' +
-                            '..X...........X..\n' +
-                            '..X...........X..\n' +
-                            '.X.............X.\n' +
-                            'X...............X\n' +
-                            '.X.............X.\n' +
-                            '..X...........X..\n' +
-                            '..X...........X..\n' +
-                            '...X.........X...\n' +
-                            '....X.......X....\n' +
-                            '.....X.....X.....\n' +
-                            '......X...X......\n' +
-                            '......X...X......\n' +
-                            '.......X.X.......\n' +
-                            '........X........\n' +
-                            '\n'
+                    'output': 'OPERATION FAILED\n'
             ],
             [
-                    'input': 'create 41 10 .B\n' +
+                    'input': 'create 41 10 B.\n' +
                             'clear\n' +
                             'line 0 0 40 8 B\n' +
                             'clear\n' +
@@ -758,7 +736,7 @@ class ShopAppTest extends GroovyTestCase {
                             '\n'
             ],
             [
-                    'input': 'create 13 8 #.*\n' +
+                    'input': 'create 13 8 #*.\n' +
                             'line 5 0 0 2 #\n' +
                             'line 7 0 12 2 #\n' +
                             'line 3 4 3 7 #\n' +
@@ -879,7 +857,15 @@ class ShopAppTest extends GroovyTestCase {
                             '.........................................\n' +
                             '.........................................\n' +
                             '.........................................\n' +
-                            '.........................................\n'
+                            '.........................................\n' +
+                            '\n' +
+                            'STACK EMPTY\n'
+            ],
+            [
+                    'input': 'create 44 18 #W+,.\n' +
+                            'replace . t\n' +
+                            'print\n',
+                    'output': 'OPERATION FAILED\n'
             ]
     ]
 

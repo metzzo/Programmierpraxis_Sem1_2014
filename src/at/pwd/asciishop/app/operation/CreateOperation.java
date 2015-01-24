@@ -21,12 +21,11 @@ public class CreateOperation implements Operation {
 
                 final int width = Integer.valueOf(app.params().get(0));
                 final int height = Integer.valueOf(app.params().get(1));
-                final String charset = app.params().get(2)+'.';
+                final String charset = app.params().get(2);
 
                 if (width <= 0 || height <= 0) throw new OperationException.InvalidInputException();
 
-                app.setImage(new AsciiImage(width, height, charset));
-                final AsciiImageManipulation operation = new AsciiImageManipulation(app.image());
+                final AsciiImageManipulation operation = new AsciiImageManipulation(new AsciiImage(width, height, charset));
                 app.setImage(operation.clear());
                 app.setState(ShopApp.ShopStates.DATA_MODIFY);
             }
@@ -34,6 +33,6 @@ public class CreateOperation implements Operation {
     }
 
     public boolean shouldSaveOnStack() {
-        return true;
+        return false;
     }
 }

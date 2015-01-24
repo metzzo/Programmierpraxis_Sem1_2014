@@ -32,7 +32,7 @@ public class AsciiImageManipulation {
                         if (image.access(x, y - 1) == straightChar) neighbours++;
                         if (image.access(x, y + 1) == straightChar) neighbours++;
                         if (neighbours <= 1) {
-                            newImage = newImage.set(x, y, '.');
+                            newImage = newImage.set(x, y, image.background());
                             hasDone = true;
                         }
                     }
@@ -48,7 +48,7 @@ public class AsciiImageManipulation {
 
         for (int x = 0;  x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
-                if (image.access(x, y) == '.') {
+                if (image.access(x, y) == image.background()) {
                     if (image.access(x - 1, y) == growChar || image.access(x + 1, y) == growChar || image.access(x, y - 1) == growChar || image.access(x, y + 1) == growChar) {
                         newImage = newImage.set(x, y, growChar);
                     }
@@ -120,7 +120,7 @@ public class AsciiImageManipulation {
         AsciiImage newImage = new AsciiImage(image);
         for (int x = 0; x < newImage.getWidth(); x++) {
             for (int y = 0; y < newImage.getHeight(); y++) {
-                newImage = newImage.set(x, y, '.');
+                newImage = newImage.set(x, y, image.background());
             }
         }
         return newImage;

@@ -1,5 +1,6 @@
 package at.pwd.asciishop.app;
 
+
 /**
  * It would be better to just say: public class AsciiStack extends LinkedList<AsciiImage> { }
  * Created by rfischer on 02.12.14.
@@ -34,7 +35,7 @@ public class AsciiStack {
     }
 
     public AsciiImage peek() {
-        return current.image;
+        return current != null ? current.image : null;
     }
 
     public boolean empty() {

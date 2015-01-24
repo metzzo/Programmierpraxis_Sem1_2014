@@ -33,6 +33,6 @@ public class LoadOperation implements Operation {
     }
 
     public boolean shouldSaveOnStack() {
-        return false;
+        return true;
     }
 }

@@ -4,7 +4,7 @@ import at.pwd.asciishop.app.ShopApp;
  * Entry point for AsciiShop
  * Info: This code only uses comments if REALLY necessary - no bloated javadoc/etc. because good code is self documenting,
  * which this code aims to be
- * For better readable code see my GitHub Repository: https://github.com/metzzo/Programmierpraxis_Sem1_2014/tree/uebung5
+ * For better readable code see my GitHub Repository: https://github.com/metzzo/Programmierpraxis_Sem1_2014/tree/uebung7
  *
  * Created by Robert on 06.11.2014.
  */

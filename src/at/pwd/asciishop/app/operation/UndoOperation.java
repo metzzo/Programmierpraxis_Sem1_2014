@@ -15,11 +15,7 @@ public class UndoOperation implements Operation {
             app.io().writeLine(Strings.STACK_EMPTY);
         }
 
-        if (!app.imageStack().empty()) {
-            app.setImage(app.imageStack().peek());
-        } else {
-            app.setImage(null);
-        }
+        app.setImage(app.imageStack().peek());
     }
 
     public boolean shouldSaveOnStack() {
